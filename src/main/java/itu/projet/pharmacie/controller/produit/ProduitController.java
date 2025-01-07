@@ -1,12 +1,16 @@
 package itu.projet.pharmacie.controller.produit;
 
 import itu.projet.pharmacie.model.produit.Produit;
+import itu.projet.pharmacie.model.symptome.Symptome;
+import itu.projet.pharmacie.model.type.Trancheage;
 import itu.projet.pharmacie.dto.ProduitDetailsDTO;
 import itu.projet.pharmacie.service.produit.ProduitService;
+import itu.projet.pharmacie.service.symptome.SymptomeService;
 import itu.projet.pharmacie.repository.laboratoire.LaboratoireRepository;
 import itu.projet.pharmacie.repository.type.TypeproduitRepository;
 import itu.projet.pharmacie.repository.type.ClasseRepository;
 import itu.projet.pharmacie.repository.type.FormeRepository;
+import itu.projet.pharmacie.repository.type.TrancheageRepository;
 import itu.projet.pharmacie.repository.type.UniteRepository;
 import itu.projet.pharmacie.repository.domaine.DomaineRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +31,12 @@ public class ProduitController {
     private ProduitService produitService;
 
     @Autowired
+    private SymptomeService symptomeService;
+
+    @Autowired
+    private TrancheageRepository trancheageRepository;
+
+    @Autowired
     private LaboratoireRepository laboratoireRepository;
 
     @Autowired
@@ -45,11 +55,26 @@ public class ProduitController {
     private DomaineRepository domaineRepository;
 
     @GetMapping("")
-    public String listProduits(Model model) {
-        List<Produit> produits = produitService.getAllProduits();
+    public String listProduits(
+            @RequestParam(required = false) Integer idSymptome,
+            @RequestParam(required = false) Integer idTrancheage,
+            Model model) {
+        
+        List<Produit> produits = produitService.filterProduits(idSymptome, idTrancheage);
+        
+        List<Symptome> symptomes = symptomeService.getAllSymptomes();
+        List<Trancheage> tranches = trancheageRepository.findAll();
+
         model.addAttribute("produits", produits);
+        model.addAttribute("symptomes", symptomes);
+        model.addAttribute("tranches", tranches);
+
+        model.addAttribute("idSymptome", idSymptome);
+        model.addAttribute("idTrancheage", idTrancheage);
+        
         return "produit/list";
     }
+
 
     @GetMapping("/add")
     public String showAddForm(Model model) {

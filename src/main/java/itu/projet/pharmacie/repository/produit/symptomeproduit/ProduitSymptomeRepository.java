@@ -12,5 +12,7 @@ import itu.projet.pharmacie.model.produit.symptomeproduit.ProduitSymptomeId;
 @Repository
 public interface ProduitSymptomeRepository extends JpaRepository<ProduitSymptome, ProduitSymptomeId> {
     List<ProduitSymptome> findByIdProduit(Integer produitId);
+    List<ProduitSymptome> findByIdIdSymptome(Integer idSymptome);
+
 }
 

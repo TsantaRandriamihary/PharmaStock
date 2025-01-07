@@ -142,6 +142,31 @@
     <div class="pagetitle">
       <h1>Liste des Produits</h1>
     </div>
+    <form method="get" th:action="@{'/produits'}">
+      <div>
+          <label for="idSymptome">Symptôme :</label>
+          <select name="idSymptome" id="idSymptome">
+              <option value="">Tous</option>
+              <option th:each="symptome : ${symptomes}" 
+                      th:value="${symptome.idSymptome}" 
+                      th:text="${symptome.nomSymptome}" 
+                      th:selected="${idSymptome == symptome.idSymptome}">
+              </option>
+          </select>
+      </div>
+      <div>
+          <label for="idTrancheage">Tranche d'âge :</label>
+          <select name="idTrancheage" id="idTrancheage">
+              <option value="">Toutes</option>
+              <option th:each="tranche : ${tranches}" 
+                      th:value="${tranche.idTrancheage}" 
+                      th:text="${tranche.nomTranche}" 
+                      th:selected="${idTrancheage == tranche.idTrancheage}">
+              </option>
+          </select>
+      </div>
+      <button type="submit">Filtrer</button>
+  </form>
     <!-- Affichage de l'erreur si elle existe -->
     <div th:if="${error}" class="alert alert-danger" role="alert">
       <p th:text="${error}"></p>

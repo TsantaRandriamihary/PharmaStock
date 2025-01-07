@@ -308,6 +308,36 @@ public class ProduitService {
         return null;
     }
 
+
+    public List<Produit> filterProduits(Integer idSymptome, Integer idTrancheage) {
+        List<Produit> produits = produitRepository.findAll();
+        
+        if (idSymptome != null) {
+            List<Integer> produitAvecSymptome = produitSymptomeRepository.findByIdIdSymptome(idSymptome)
+                    .stream()
+                    .map(ProduitSymptome::getIdProduit)
+                    .toList();
+
+            produits = produits.stream()
+                    .filter(p -> produitAvecSymptome.contains(p.getIdProduit()))
+                    .toList();
+        }
+        if (idTrancheage != null) {
+            List<Integer> produitsAvecTranche = produitTrancheageRepository.findByIdTrancheage(idTrancheage)
+                    .stream()
+                    .map(ProduitTrancheage::getIdProduit)
+                    .toList();
+
+            produits = produits.stream()
+                    .filter(p -> produitsAvecTranche.contains(p.getIdProduit()))
+                    .toList();
+        }
+        return produits;
+    }
+
+
+   
+
     public List<Lot> getLotsForProduitWithQuantity(Integer produitId, int quantiteDemandee, Timestamp dateVente) {
         List<Lot> lots = lotRepository.findByProduitIdProduitAndDatePeremptionGreaterThanOrderByDatePeremptionAsc(produitId, dateVente);
         List<Lot> selectedLots = new ArrayList<>();
