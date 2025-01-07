@@ -106,7 +106,7 @@ CREATE TABLE produit(
    nom_produit VARCHAR(255)  NOT NULL,
    description_produit TEXT,
    quantite_unitaire INTEGER,
-   dose NUMERIC(15,2)  ,
+   dose NUMERIC(5, 2)(15,2)  ,
    etat_produit INTEGER,
    prix NUMERIC(15,2)   NOT NULL,
    id_forme INTEGER NOT NULL,
@@ -155,8 +155,8 @@ CREATE TABLE achat(
    id_achat SERIAL,
    description_achat TEXT,
    date_achat TIMESTAMP NOT NULL,
-   etat_achat INTEGER NOT NULL,
-   montant_total NUMERIC(15,2)  ,
+   etat_achat INTEGER,
+   montant_total NUMERIC(15,2),
    id_laboratoire INTEGER,
    id_fournisseur INTEGER,
    PRIMARY KEY(id_achat),
@@ -178,7 +178,7 @@ CREATE TABLE achat_details(
 CREATE TABLE vente(
    id_vente SERIAL,
    date_vente TIMESTAMP NOT NULL,
-   etat_vente INTEGER NOT NULL,
+   etat_vente INTEGER,
    montant_total NUMERIC(15,2)  ,
    description_vente TEXT,
    id_client INTEGER NOT NULL,
@@ -200,8 +200,8 @@ CREATE TABLE vente_details(
 CREATE TABLE mouvement_stock(
    id_mouvement SERIAL,
    date_mouvement TIMESTAMP NOT NULL,
-   estAchat BOOLEAN NOT NULL,
-   reference INTEGER NOT NULL,
+   est_achat BOOLEAN,
+   reference INTEGER,
    PRIMARY KEY(id_mouvement)
 );
 
@@ -246,6 +246,7 @@ CREATE TABLE substance_symptome(
 CREATE TABLE maladie_symptome(
    id_symptome INTEGER,
    id_maladie INTEGER,
+   degre NUMERIC(5,2),
    PRIMARY KEY(id_symptome, id_maladie),
    FOREIGN KEY(id_symptome) REFERENCES symptome(id_symptome),
    FOREIGN KEY(id_maladie) REFERENCES maladie(id_maladie)
@@ -279,6 +280,7 @@ CREATE TABLE produit_genre(
 CREATE TABLE produit_substance(
    id_substance INTEGER,
    id_produit INTEGER,
+   degre NUMERIC(5,2),
    PRIMARY KEY(id_substance, id_produit),
    FOREIGN KEY(id_substance) REFERENCES substance(id_substance),
    FOREIGN KEY(id_produit) REFERENCES produit(id_produit)

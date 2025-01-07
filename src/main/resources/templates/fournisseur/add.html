@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>Ajouter / Modifier Fournisseur</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link th:href="@{/assets/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+  <link th:href="@{/assets/vendor/bootstrap-icons/bootstrap-icons.css}" rel="stylesheet">
+  <link th:href="@{/assets/vendor/boxicons/css/boxicons.min.css}" rel="stylesheet">
+  <link th:href="@{/assets/css/style.css}" rel="stylesheet">
+</head>
+
+<body>
+  <!-- Header -->
+  <header id="header" class="header fixed-top d-flex align-items-center">
+    <div class="d-flex align-items-center justify-content-between">
+      <a href="@{/}" class="logo d-flex align-items-center">
+        <img src="assets/img/logo.png" alt="">
+        <span class="d-none d-lg-block">Pharmacie</span>
+      </a>
+      <i class="bi bi-list toggle-sidebar-btn"></i>
+    </div>
+  </header>
+
+  <  <!-- ======= Sidebar ======= -->
+  <aside id="sidebar" class="sidebar">
+    <ul class="sidebar-nav" id="sidebar-nav">
+      <li class="nav-item">
+        <a class="nav-link " data-bs-target="#forms-nav" data-bs-toggle="collapse">
+          <i class="bi bi-journal-text"></i><span>Elements</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="forms-nav" class="nav-content collapse show" data-bs-parent="#sidebar-nav">
+          <li>
+            <a th:href="@{/substances}">
+              <i class="bi bi-circle"></i><span>Substances</span>
+            </a>
+          </li>
+          <li>
+            <a th:href="@{/symptomes}">
+              <i class="bi bi-circle"></i><span>Symptomes</span>
+            </a>
+          </li>
+          <li>
+            <a th:href="@{/agentsubstance}">
+              <i class="bi bi-circle"></i><span>Agent - Substance</span>
+            </a>
+          </li>
+          <li>
+            <a th:href="@{/substancesymptome}">
+              <i class="bi bi-circle"></i><span>Substance - Symptomes</span>
+            </a>
+          </li>
+          <li>
+            <a th:href="@{/lots}">
+              <i class="bi bi-circle"></i><span>Lots de produits</span>
+            </a>
+          </li>
+          <li>
+            <a th:href="@{/fournisseurs}">
+              <i class="bi bi-circle"></i><span>Fournisseurs</span>
+            </a>
+          </li>
+          <li>
+            <a th:href="@{/clients}">
+              <i class="bi bi-circle"></i><span>Clients</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" th:href="@{/maladies}">
+          <i class="bi bi-person"></i>
+          <span>Maladies</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link collapsed" th:href="@{/laboratoires}">
+          <i class="bi bi-person"></i>
+          <span>Laboratoires</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link collapsed" th:href="@{/produits}">
+          <i class="bi bi-person"></i>
+          <span>Produits</span>
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link " data-bs-target="#forms-nav" data-bs-toggle="collapse">
+          <i class="bi bi-journal-text"></i><span>Transactions</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="forms-nav" class="nav-content collapse show" data-bs-parent="#sidebar-nav">
+          <li>
+            <a th:href="@{/achats}">
+              <i class="bi bi-circle"></i><span>Achats de produits</span>
+            </a>
+          </li>
+          <li>
+            <a th:href="@{/ventes}">
+              <i class="bi bi-circle"></i><span>Ventes de produits</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link " data-bs-target="#forms-nav" data-bs-toggle="collapse">
+          <i class="bi bi-journal-text"></i><span>Gestion de stocks</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="forms-nav" class="nav-content collapse show" data-bs-parent="#sidebar-nav">
+          <li>
+            <a th:href="@{/mouvement-stock}">
+              <i class="bi bi-circle"></i><span>Mouvements de stock</span>
+            </a>
+          </li>
+          
+        </ul>
+      </li>
+      
+    </ul>
+  </aside>
+  <!-- End Sidebar -->
+
+  <!-- Main Content -->
+  <main id="main" class="main">
+    <div class="pagetitle">
+      <h1>Ajouter / Modifier Fournisseur</h1>
+    </div>
+    <section class="section">
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Formulaire d'ajout ou de modification de fournisseur</h5>
+
+              <!-- Affichage de l'erreur si elle existe -->
+              <div th:if="${error}" class="alert alert-danger" role="alert">
+                <p th:text="${error}"></p>
+              </div>
+
+              <!-- Formulaire d'insertion/modification -->
+              <form th:action="@{${fournisseur?.idFournisseur != null} ? '/fournisseurs/update' : '/fournisseurs/save'}" 
+                    method="post" class="row g-3">
+                <!-- Champ caché pour l'ID si c'est une modification -->
+                <input type="hidden" name="idFournisseur" th:value="${fournisseur?.idFournisseur}" th:if="${fournisseur?.idFournisseur != null}" />
+
+                <div class="col-md-6">
+                  <label for="nomFournisseur" class="form-label">Nom du Fournisseur</label>
+                  <input type="text" class="form-control" id="nomFournisseur" name="nomFournisseur"
+                    th:value="${fournisseur?.nomFournisseur}" required>
+                </div>
+
+                <div class="col-md-6">
+                  <label for="contactFournisseur" class="form-label">Contact (Téléphone)</label>
+                  <input type="tel" class="form-control" id="contactFournisseur" name="contactFournisseur"
+                    th:value="${fournisseur?.contactFournisseur}" 
+                    placeholder="+261-32-123-4567" 
+                    pattern="^\+261[-.\s]?(32|33|34|20|22)[-.\s]?\d{3}[-.\s]?\d{4}$" 
+                    required>
+                </div>
+                
+                <div class="col-md-12">
+                  <label for="adresseFournisseur" class="form-label">Adresse</label>
+                  <textarea class="form-control" id="adresseFournisseur" name="adresseFournisseur" rows="3"
+                    th:text="${fournisseur?.adresseFournisseur}" required></textarea>
+                </div>
+
+                <div class="text-center">
+                  <button type="submit" class="btn btn-primary" 
+                    th:text="${fournisseur?.idFournisseur != null ? 'Modifier' : 'Enregistrer'}"></button>
+                  <button type="reset" class="btn btn-secondary">Réinitialiser</button>
+                </div>
+              </form><!-- Fin du formulaire -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer id="footer" class="footer">
+    <div class="copyright">
+      <strong><span>Pharmacie</span></strong>. Tous droits réservés.
+    </div>
+  </footer>
+
+  <!-- Vendor JS Files -->
+  <script th:src="@{/assets/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+  <script th:src="@{/assets/vendor/simple-datatables/simple-datatables.js}"></script>
+  <script th:src="@{/assets/js/main.js}"></script>
+</body>
+
+</html>
