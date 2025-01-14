@@ -143,6 +143,64 @@
       <h1>Liste des Ventes</h1>
     </div>
 
+    <section class="section">
+      <div class="row">
+        <!-- Titre et bouton pour afficher/masquer -->
+        <div class="row mb-3">
+          <div class="col-12 d-flex justify-content-between align-items-center">
+            <h5>Filtres de recherche</h5>
+            <button class="btn btn-primary btn-sm" id="toggleFilterBtn">Afficher/masquer le filtre</button>
+          </div>
+        </div>
+    
+        <!-- Carte contenant le formulaire -->
+        <div class="card col-lg-5 d-none" id="filterForm">
+          <div class="card-body">
+            <h5 class="card-title">Filtres</h5>
+    
+            <!-- Formulaire avec Floating Labels -->
+            <form class="row g-3">
+              <div class="col-md-6">
+                <div class="form-floating">
+                  <select class="form-select" id="idForme" name="idForme">
+                    <option value="">Tous</option>
+                    <option th:each="forme : ${formes}" 
+                            th:value="${forme.idForme}" 
+                            th:text="${forme.nomForme}" 
+                            th:selected="${idForme == forme.idForme}">
+                    </option>
+                  </select>
+                  <label for="idForme">Forme du produit</label>
+                </div>
+              </div>
+    
+              <div class="col-md-6">
+                <div class="form-floating">
+                  <select class="form-select" id="idTrancheage" name="idTrancheage">
+                    <option value="">Toutes</option>
+                    <option th:each="tranche : ${tranches}" 
+                            th:value="${tranche.idTrancheage}" 
+                            th:text="${tranche.nomTranche}" 
+                            th:selected="${idTrancheage == tranche.idTrancheage}">
+                    </option>
+                  </select>
+                  <label for="idTrancheage">Tranche d'âge</label>
+                </div>
+              </div>
+    
+              <!-- Boutons -->
+              <div class="text-center">
+                <button type="submit" class="btn btn-primary btn-sm">Filtrer</button>
+                <button type="reset" class="btn btn-secondary btn-sm">Réinitialiser</button>
+              </div>
+            </form>
+            <!-- Fin du formulaire -->
+    
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Affichage de l'erreur si elle existe -->
     <div th:if="${error}" class="alert alert-danger" role="alert">
       <p th:text="${error}"></p>
@@ -197,7 +255,12 @@
       <strong><span>Pharmacie</span></strong``>. Tous droits réservés.
     </div>
   </footer>
-
+  <script>
+    document.getElementById('toggleFilterBtn').addEventListener('click', function () {
+      const filterForm = document.getElementById('filterForm');
+      filterForm.classList.toggle('d-none');
+    });
+  </script>
   <!-- Vendor JS Files -->
   <script th:src="@{/assets/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
   <script th:src="@{/assets/vendor/simple-datatables/simple-datatables.js}"></script>

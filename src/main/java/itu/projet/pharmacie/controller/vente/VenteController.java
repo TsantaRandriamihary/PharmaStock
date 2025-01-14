@@ -2,9 +2,14 @@ package itu.projet.pharmacie.controller.vente;
 
 import itu.projet.pharmacie.model.historiqueprix.HistoriquePrix;
 import itu.projet.pharmacie.model.lot.Lot;
+import itu.projet.pharmacie.model.symptome.Symptome;
+import itu.projet.pharmacie.model.type.Forme;
+import itu.projet.pharmacie.model.type.Trancheage;
 import itu.projet.pharmacie.model.vente.Vente;
 import itu.projet.pharmacie.model.vente.VenteDetails;
 import itu.projet.pharmacie.repository.historiqueprix.HistoriquePrixRepository;
+import itu.projet.pharmacie.repository.type.FormeRepository;
+import itu.projet.pharmacie.repository.type.TrancheageRepository;
 import itu.projet.pharmacie.service.vente.VenteService;
 import itu.projet.pharmacie.service.personnage.ClientService;
 import itu.projet.pharmacie.service.produit.ProduitService;
@@ -36,11 +41,30 @@ public class VenteController {
     private HistoriquePrixRepository historiquePrixRepository;
 
     @Autowired
+    private FormeRepository formeRepository;
+
+    @Autowired
     private ProduitService produitService;
 
+    @Autowired
+    private TrancheageRepository trancheageRepository;
+
+
     @GetMapping
-    public String listVentes(Model model) {
-        List<Vente> ventes = venteService.getAllVentes();
+    public String listVentes(
+        @RequestParam(required = false) Integer idForme,
+        @RequestParam(required = false) Integer idTrancheage,
+        Model model) {
+        List<Vente> ventes = venteService.filtrerVentes(idForme, idTrancheage);
+        List<Forme> formes = formeRepository.findAll();
+        List<Trancheage> tranches = trancheageRepository.findAll();
+
+        model.addAttribute("formes", formes);
+        model.addAttribute("tranches", tranches);
+
+        model.addAttribute("idForme", idForme);
+        model.addAttribute("idTrancheage", idTrancheage);
+        
         model.addAttribute("ventes", ventes);
         return "vente/list";
     }

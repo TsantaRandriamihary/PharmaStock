@@ -142,31 +142,66 @@
     <div class="pagetitle">
       <h1>Liste des Produits</h1>
     </div>
-    <form method="get" th:action="@{'/produits'}">
-      <div>
-          <label for="idSymptome">Symptôme :</label>
-          <select name="idSymptome" id="idSymptome">
-              <option value="">Tous</option>
-              <option th:each="symptome : ${symptomes}" 
-                      th:value="${symptome.idSymptome}" 
-                      th:text="${symptome.nomSymptome}" 
-                      th:selected="${idSymptome == symptome.idSymptome}">
-              </option>
-          </select>
+    <section class="section">
+      <div class="row">
+        <!-- Titre et bouton pour afficher/masquer -->
+        <div class="row mb-3">
+          <div class="col-12 d-flex justify-content-between align-items-center">
+            <h5>Filtres de recherche</h5>
+            <button class="btn btn-primary btn-sm" id="toggleFilterBtn">Afficher/masquer le filtre</button>
+          </div>
+        </div>
+    
+        <!-- Carte contenant le formulaire -->
+        <div class="card col-lg-5 d-none" id="filterForm">
+          <div class="card-body">
+            <h5 class="card-title">Filtres</h5>
+    
+            <!-- Formulaire avec Floating Labels -->
+            <form method="get" th:action="@{'/produits'}" class="row g-3">
+              <!-- Sélection des symptômes -->
+              <div class="col-md-6">
+                <div class="form-floating">
+                  <select name="idSymptome" id="idSymptome" class="form-select">
+                    <option value="">Tous</option>
+                    <option th:each="symptome : ${symptomes}" 
+                            th:value="${symptome.idSymptome}" 
+                            th:text="${symptome.nomSymptome}" 
+                            th:selected="${idSymptome == symptome.idSymptome}">
+                    </option>
+                  </select>
+                  <label for="idSymptome">Symptôme</label>
+                </div>
+              </div>
+    
+              <!-- Sélection de la tranche d'âge -->
+              <div class="col-md-6">
+                <div class="form-floating">
+                  <select name="idTrancheage" id="idTrancheage" class="form-select">
+                    <option value="">Toutes</option>
+                    <option th:each="tranche : ${tranches}" 
+                            th:value="${tranche.idTrancheage}" 
+                            th:text="${tranche.nomTranche}" 
+                            th:selected="${idTrancheage == tranche.idTrancheage}">
+                    </option>
+                  </select>
+                  <label for="idTrancheage">Tranche d'âge</label>
+                </div>
+              </div>
+    
+              <!-- Boutons -->
+              <div class="text-center">
+                <button type="submit" class="btn btn-primary btn-sm">Filtrer</button>
+                <button type="reset" class="btn btn-secondary btn-sm">Réinitialiser</button>
+              </div>
+            </form>
+            <!-- Fin du formulaire -->
+    
+          </div>
+        </div>
       </div>
-      <div>
-          <label for="idTrancheage">Tranche d'âge :</label>
-          <select name="idTrancheage" id="idTrancheage">
-              <option value="">Toutes</option>
-              <option th:each="tranche : ${tranches}" 
-                      th:value="${tranche.idTrancheage}" 
-                      th:text="${tranche.nomTranche}" 
-                      th:selected="${idTrancheage == tranche.idTrancheage}">
-              </option>
-          </select>
-      </div>
-      <button type="submit">Filtrer</button>
-  </form>
+    </section>
+    
     <!-- Affichage de l'erreur si elle existe -->
     <div th:if="${error}" class="alert alert-danger" role="alert">
       <p th:text="${error}"></p>
@@ -224,6 +259,12 @@
     </div>
   </footer>
 
+  <script>
+    document.getElementById('toggleFilterBtn').addEventListener('click', function () {
+      const filterForm = document.getElementById('filterForm');
+      filterForm.classList.toggle('d-none');
+    });
+  </script>
   <!-- Vendor JS Files -->
   <script th:src="@{/assets/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
   <script th:src="@{/assets/vendor/simple-datatables/simple-datatables.js}"></script>

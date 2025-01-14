@@ -1,17 +1,20 @@
 package itu.projet.pharmacie.service.vente;
 
 import itu.projet.pharmacie.model.mvtstock.MouvementStockDetails;
+import itu.projet.pharmacie.model.produit.Produit;
 import itu.projet.pharmacie.model.vente.Vente;
 import itu.projet.pharmacie.model.vente.VenteDetails;
 import itu.projet.pharmacie.repository.mvtstock.MouvementStockDetailsRepository;
 import itu.projet.pharmacie.repository.mvtstock.MouvementStockRepository;
 import itu.projet.pharmacie.repository.vente.VenteDetailsRepository;
 import itu.projet.pharmacie.repository.vente.VenteRepository;
+import itu.projet.pharmacie.service.produit.ProduitService;
 import jakarta.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,6 +30,13 @@ public class VenteService {
 
     @Autowired
     private MouvementStockDetailsRepository mouvementStockDetailsRepository;
+
+    @Autowired
+    private ProduitService produitService;
+
+    @Autowired
+    private VenteDetailsService venteDetailsService;
+
 
     public Vente createVenteWithDetails(Vente vente, List<VenteDetails> detailsList) {
         for (VenteDetails details : detailsList) {
@@ -112,5 +122,25 @@ public class VenteService {
                 .map(venteDetailsRepository::findByVente)
                 .orElseThrow(() -> new RuntimeException("Vente not found with id: " + idVente));
     }
+
+
+    public List<Vente> getVentesByVenteDetails(List<VenteDetails> venteDetailsList) {
+        if (venteDetailsList == null || venteDetailsList.isEmpty()) {
+            return new ArrayList<>();
+        }
+        
+        return venteDetailsList.stream()
+                .map(VenteDetails::getVente)
+                .distinct()
+                .toList();
+    }
+
+    public List<Vente> filtrerVentes(Integer idForme, Integer idTrancheage) {
+        List<Produit> produitsFiltres = produitService.filterProduits(null, idTrancheage, idForme);
+        List<VenteDetails> venteDetailsFiltres = venteDetailsService.getVenteDetailsByProduits(produitsFiltres);
+        return getVentesByVenteDetails(venteDetailsFiltres);
+    }
+
+
 }
 

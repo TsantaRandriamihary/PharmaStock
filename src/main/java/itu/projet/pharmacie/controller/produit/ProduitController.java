@@ -60,7 +60,7 @@ public class ProduitController {
             @RequestParam(required = false) Integer idTrancheage,
             Model model) {
         
-        List<Produit> produits = produitService.filterProduits(idSymptome, idTrancheage);
+        List<Produit> produits = produitService.filterProduits(idSymptome, idTrancheage, null);
         
         List<Symptome> symptomes = symptomeService.getAllSymptomes();
         List<Trancheage> tranches = trancheageRepository.findAll();

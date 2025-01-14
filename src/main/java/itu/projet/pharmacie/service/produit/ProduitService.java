@@ -309,9 +309,13 @@ public class ProduitService {
     }
 
 
-    public List<Produit> filterProduits(Integer idSymptome, Integer idTrancheage) {
+    public List<Produit> filterProduits(Integer idSymptome, Integer idTrancheage, Integer idForme) {
         List<Produit> produits = produitRepository.findAll();
-        
+        if (idForme != null) {
+            produits = produits.stream()
+                    .filter(p -> p.getForme() != null && p.getForme().getIdForme().equals(idForme))
+                    .toList();
+        }
         if (idSymptome != null) {
             List<Integer> produitAvecSymptome = produitSymptomeRepository.findByIdIdSymptome(idSymptome)
                     .stream()
@@ -334,6 +338,8 @@ public class ProduitService {
         }
         return produits;
     }
+
+    
 
 
    

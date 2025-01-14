@@ -1,10 +1,12 @@
 package itu.projet.pharmacie.service.vente;
 
+import itu.projet.pharmacie.model.produit.Produit;
 import itu.projet.pharmacie.model.vente.VenteDetails;
 import itu.projet.pharmacie.repository.vente.VenteDetailsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,5 +44,13 @@ public class VenteDetailsService {
         } else {
             throw new RuntimeException("VenteDetails not found with id: " + id);
         }
+    }
+
+    
+    public List<VenteDetails> getVenteDetailsByProduits(List<Produit> produits) {
+        if (produits == null || produits.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return venteDetailsRepository.findByLot_ProduitIn(produits);
     }
 }
