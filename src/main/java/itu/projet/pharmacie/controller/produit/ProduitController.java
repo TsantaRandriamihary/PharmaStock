@@ -1,12 +1,14 @@
 package itu.projet.pharmacie.controller.produit;
 
 import itu.projet.pharmacie.model.produit.Produit;
+import itu.projet.pharmacie.model.selection.TypeSelection;
 import itu.projet.pharmacie.model.symptome.Symptome;
 import itu.projet.pharmacie.model.type.Trancheage;
 import itu.projet.pharmacie.dto.ProduitDetailsDTO;
 import itu.projet.pharmacie.service.produit.ProduitService;
 import itu.projet.pharmacie.service.symptome.SymptomeService;
 import itu.projet.pharmacie.repository.laboratoire.LaboratoireRepository;
+import itu.projet.pharmacie.repository.selection.TypeSelectionRepository;
 import itu.projet.pharmacie.repository.type.TypeproduitRepository;
 import itu.projet.pharmacie.repository.type.ClasseRepository;
 import itu.projet.pharmacie.repository.type.FormeRepository;
@@ -54,27 +56,39 @@ public class ProduitController {
     @Autowired
     private DomaineRepository domaineRepository;
 
+    @Autowired
+    private TypeSelectionRepository typeSelectionRepository;
+
     @GetMapping("")
     public String listProduits(
             @RequestParam(required = false) Integer idSymptome,
             @RequestParam(required = false) Integer idTrancheage,
+            @RequestParam(required = false) Integer idTypeSelection,   // Ajout du paramètre idTypeSelection
+            @RequestParam(required = false) String date,               // Ajout du paramètre date
             Model model) {
         
-        List<Produit> produits = produitService.filterProduits(idSymptome, idTrancheage, null);
+        // Utilisation de la nouvelle méthode avec les nouveaux paramètres
+        List<Produit> produits = produitService.filterProduits(idSymptome, idTrancheage, null, idTypeSelection, date);
         
+        // Récupération des autres données pour afficher les filtres
         List<Symptome> symptomes = symptomeService.getAllSymptomes();
         List<Trancheage> tranches = trancheageRepository.findAll();
+        List<TypeSelection> typeselections = typeSelectionRepository.findAll();
 
+        // Ajout des produits et des filtres au modèle
         model.addAttribute("produits", produits);
         model.addAttribute("symptomes", symptomes);
         model.addAttribute("tranches", tranches);
+        model.addAttribute("typeselections", typeselections);
 
+        // Ajout des paramètres dans le modèle pour conserver les valeurs sélectionnées
         model.addAttribute("idSymptome", idSymptome);
         model.addAttribute("idTrancheage", idTrancheage);
+        model.addAttribute("idTypeSelection", idTypeSelection);  // Ajout du paramètre idTypeSelection
+        model.addAttribute("date", date);                         // Ajout du paramètre date
         
-        return "produit/list";
+        return "produit/list"; // Vue pour afficher la liste des produits
     }
-
 
     @GetMapping("/add")
     public String showAddForm(Model model) {

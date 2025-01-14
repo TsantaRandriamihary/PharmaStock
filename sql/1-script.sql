@@ -293,3 +293,22 @@ CREATE TABLE produit_symptome(
    FOREIGN KEY(id_symptome) REFERENCES symptome(id_symptome),
    FOREIGN KEY(id_produit) REFERENCES produit(id_produit)
 );
+
+
+CREATE TABLE type_selection(
+   id_type_selection SERIAL,
+   nom_selection VARCHAR(50) ,
+   PRIMARY KEY(id_type_selection)
+);
+
+CREATE TABLE selection(
+   id_selection SERIAL,
+   date_debut VARCHAR(50) ,
+   date_fin VARCHAR(50) ,
+   description VARCHAR(50) ,
+   id_type_selection INTEGER,
+   id_produit INTEGER,
+   PRIMARY KEY(id_selection),
+   FOREIGN KEY(id_type_selection) REFERENCES type_selection(id_type_selection),
+   FOREIGN KEY(id_produit) REFERENCES produit(id_produit)
+);

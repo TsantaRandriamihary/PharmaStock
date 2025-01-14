@@ -136,3 +136,9 @@ VALUES (3, 'Approvisionnement Sopharmad du Février 2025', '2025-02-01 00:00:00'
 INSERT INTO achat_details (id_achat_details, prix_achat_unitaire, prix_achat_total, id_lot, id_achat) VALUES
     (5, 4500.00, NULL, 3, 3), 
     (6, 2500.00, NULL, 2, 3); 
+
+
+INSERT INTO type_selection (nom_selection)
+VALUES 
+('Choix du Redacteur'),
+('Conseil du Mois');

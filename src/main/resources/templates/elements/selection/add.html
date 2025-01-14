@@ -4,8 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-
-  <title>Insertion / Modification des Produits</title>
+  <title>Insertion / Modification des Selections</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
 
@@ -61,7 +60,7 @@
             </li>
             <li>
               <a th:href="@{/lots}">
-                <i class="bi bi-circle"></i><span>Lots de produits</span>
+                <i class="bi bi-circle"></i><span>Lots</span>
               </a>
             </li>
             <li>
@@ -140,7 +139,7 @@
   <!-- Main Content -->
   <main id="main" class="main">
     <div class="pagetitle">
-      <h1>Insertion / Modification des Produits</h1>
+      <h1>Insertion / Modification de Sélection</h1>
     </div>
 
     <section class="section">
@@ -148,124 +147,53 @@
         <div class="col-lg-12">
           <div class="card">
             <div class="card-body">
-              <h5 class="card-title">Formulaire d'insertion de produit</h5>
+              <h5 class="card-title">Formulaire d'insertion de sélection</h5>
 
-              <!-- Affichage de l'erreur -->
+              <!-- Affichage des erreurs -->
               <div th:if="${error}" class="alert alert-danger" role="alert">
                 <p th:text="${error}"></p>
               </div>
 
-              <!-- Formulaire d'insertion/modification -->
-              <form th:action="@{${produit?.idProduit != null} ? '/produits/update' : '/produits/save'}" 
-                    method="post" class="row g-3">
-                <!-- Champ caché pour l'ID si modification -->
-                <input type="hidden" name="idProduit" th:value="${produit?.idProduit}" />
-                <!-- Date -->
-                <div class="col-md-6">
-                  <label for="date" class="form-label">Date</label>
-                  <input type="date" class="form-control" id="date" name="date" 
-                         th:value="${date}" required>
-                </div>
-                <!-- Nom du produit -->
-                <div class="col-md-6">
-                  <label for="nomProduit" class="form-label">Nom du Produit</label>
-                  <input type="text" class="form-control" id="nomProduit" name="nomProduit" 
-                         th:value="${produit?.nomProduit}" required>
-                </div>
+              <!-- Formulaire d'insertion -->
+              <form th:action="@{/selections/save}" method="post" class="row g-3">
 
+                <!-- Type de sélection -->
                 <div class="col-md-6">
-                  <label for="typeproduit" class="form-label">Type du produit</label>
-                  <select id="typeproduit" class="form-select" name="typeproduit" required>
-                    <option th:each="d : ${types}" th:value="${d.idTypeproduit}" 
-                            th:text="${d.nomTypeproduit}" 
-                            th:selected="${d.idTypeproduit == produit?.typeproduit?.idTypeproduit}">
-                      Sélectionnez un type
-                    </option>
+                  <label for="typeSelection" class="form-label">Type de Sélection</label>
+                  <select id="typeSelection" class="form-select" name="idTypeSelection" required>
+                    <option th:each="type : ${typeselection}" th:value="${type.idTypeSelection}" th:text="${type.nomSelection}"></option>
                   </select>
                 </div>
-                
+
+                <!-- Produit -->
+                <div class="col-md-6">
+                  <label for="produit" class="form-label">Produit</label>
+                  <select id="produit" class="form-select" name="idProduit" required>
+                    <option th:each="produit : ${produits}" th:value="${produit.idProduit}" th:text="${produit.nomProduit}"></option>
+                  </select>
+                </div>
 
                 <!-- Description -->
-                <div class="col-md-6">
-                  <label for="descriptionProduit" class="form-label">Description</label>
-                  <input type="text" class="form-control" id="descriptionProduit" name="descriptionProduit" 
-                         th:value="${produit?.descriptionProduit}" required>
+                <div class="col-md-12">
+                  <label for="description" class="form-label">Description</label>
+                  <textarea class="form-control" id="description" name="description" rows="4" required></textarea>
                 </div>
 
-                <!-- Quantité Unitaire -->
+                <!-- Date début -->
                 <div class="col-md-6">
-                  <label for="quantiteUnitaire" class="form-label">Quantité Unitaire</label>
-                  <input type="number" class="form-control" id="quantiteUnitaire" name="quantiteUnitaire" 
-                         th:value="${produit?.quantiteUnitaire}" required>
+                  <label for="dateDebut" class="form-label">Date de début</label>
+                  <input type="date" class="form-control" id="dateDebut" name="dateDebut" required>
                 </div>
 
-                <!-- Dose -->
+                <!-- Date fin -->
                 <div class="col-md-6">
-                  <label for="dose" class="form-label">Dose</label>
-                  <input type="number" step="0.01" class="form-control" id="dose" name="dose" 
-                         th:value="${produit?.dose}" required>
-                </div>
-
-                <div class="col-md-6">
-                    <label for="unite" class="form-label">Unite</label>
-                    <select id="unite" class="form-select" name="unite">
-                      <option th:each="u : ${unites}" th:value="${u.idUnite}" 
-                              th:text="${u.nomUnite}" 
-                              th:selected="${u.idUnite == produit?.unite?.idUnite}"></option>
-                    </select>
-                  </div>
-
-                <!-- Prix -->
-                <div class="col-md-6">
-                  <label for="prix" class="form-label">Prix</label>
-                  <input type="number" step="0.01" class="form-control" id="prix" name="prix" 
-                         th:value="${produit?.prix}" required>
-                </div>
-
-                <!-- Forme -->
-                <div class="col-md-6">
-                  <label for="forme" class="form-label">Forme</label>
-                  <select id="forme" class="form-select" name="forme" required>
-                    <option th:each="f : ${formes}" th:value="${f.idForme}" 
-                            th:text="${f.nomForme}" 
-                            th:selected="${f.idForme == produit?.forme?.idForme}"></option>
-                  </select>
-                </div>
-
-                <!-- Classe -->
-                <div class="col-md-6">
-                  <label for="classe" class="form-label">Classe</label>
-                  <select id="classe" class="form-select" name="classe">
-                    <option th:each="c : ${classes}" th:value="${c.idClasse}" 
-                            th:text="${c.nomClasse}" 
-                            th:selected="${c.idClasse == produit?.classe?.idClasse}"></option>
-                  </select>
-                </div>
-
-                <!-- Laboratoire -->
-                <div class="col-md-6">
-                  <label for="laboratoire" class="form-label">Laboratoire</label>
-                  <select id="laboratoire" class="form-select" name="laboratoire" required>
-                    <option th:each="l : ${laboratoires}" th:value="${l.idLaboratoire}" 
-                            th:text="${l.nomLaboratoire}" 
-                            th:selected="${l.idLaboratoire == produit?.laboratoire?.idLaboratoire}"></option>
-                  </select>
-                </div>
-
-                <!-- Domaine -->
-                <div class="col-md-6">
-                  <label for="domaine" class="form-label">Domaine</label>
-                  <select id="domaine" class="form-select" name="domaine">
-                    <option th:each="d : ${domaines}" th:value="${d.idDomaine}" 
-                            th:text="${d.nomDomaine}" 
-                            th:selected="${d.idDomaine == produit?.domaine?.idDomaine}"></option>
-                  </select>
+                  <label for="dateFin" class="form-label">Date de fin</label>
+                  <input type="date" class="form-control" id="dateFin" name="dateFin" required>
                 </div>
 
                 <!-- Boutons -->
                 <div class="text-center">
-                  <button type="submit" class="btn btn-primary" 
-                          th:text="${produit?.idProduit != null ? 'Modifier' : 'Enregistrer'}"></button>
+                  <button type="submit" class="btn btn-primary">Enregistrer</button>
                   <button type="reset" class="btn btn-secondary">Réinitialiser</button>
                 </div>
               </form>
@@ -277,6 +205,7 @@
     </section>
   </main>
 
+  
   <!-- Footer -->
   <footer id="footer" class="footer">
     <div class="copyright">

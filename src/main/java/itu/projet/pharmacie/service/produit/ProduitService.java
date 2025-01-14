@@ -5,6 +5,7 @@ import itu.projet.pharmacie.model.lot.Lot;
 import itu.projet.pharmacie.model.produit.Produit;
 import itu.projet.pharmacie.dto.ProduitDetailsDTO;
 import itu.projet.pharmacie.model.produit.trancheageproduit.ProduitTrancheage;
+import itu.projet.pharmacie.model.selection.Selection;
 import itu.projet.pharmacie.model.substance.Substance;
 import itu.projet.pharmacie.model.symptome.Symptome;
 import itu.projet.pharmacie.model.type.*;
@@ -21,6 +22,7 @@ import itu.projet.pharmacie.repository.produit.genreproduit.ProduitGenreReposito
 import itu.projet.pharmacie.repository.produit.substanceproduit.ProduitSubstanceRepository;
 import itu.projet.pharmacie.repository.produit.symptomeproduit.ProduitSymptomeRepository;
 import itu.projet.pharmacie.repository.produit.trancheageproduit.ProduitTrancheageRepository;
+import itu.projet.pharmacie.repository.selection.SelectionRepository;
 import itu.projet.pharmacie.repository.substance.SubstanceRepository;
 import itu.projet.pharmacie.repository.symptome.SymptomeRepository;
 import itu.projet.pharmacie.repository.type.GenreRepository;
@@ -76,6 +78,8 @@ public class ProduitService {
 
     @Autowired
     private MouvementStockDetailsRepository mouvementStockDetailsRepository;
+    @Autowired
+    private SelectionRepository selectionRepository;
 
 
     public Produit createProduit(Produit produit) {
@@ -338,6 +342,77 @@ public class ProduitService {
         }
         return produits;
     }
+
+    public List<Produit> filterProduits(Integer idSymptome, Integer idTrancheage, Integer idForme, 
+                                     Integer idTypeSelection, String date) {
+    List<Produit> produits = produitRepository.findAll();
+
+    // Filtrage par idForme si non null
+    if (idForme != null) {
+        produits = produits.stream()
+                .filter(p -> p.getForme() != null && p.getForme().getIdForme().equals(idForme))
+                .toList();
+    }
+
+    // Filtrage par idSymptome si non null
+    if (idSymptome != null) {
+        List<Integer> produitAvecSymptome = produitSymptomeRepository.findByIdIdSymptome(idSymptome)
+                .stream()
+                .map(ProduitSymptome::getIdProduit)
+                .toList();
+
+        produits = produits.stream()
+                .filter(p -> produitAvecSymptome.contains(p.getIdProduit()))
+                .toList();
+    }
+
+    // Filtrage par idTrancheage si non null
+    if (idTrancheage != null) {
+        List<Integer> produitsAvecTranche = produitTrancheageRepository.findByIdTrancheage(idTrancheage)
+                .stream()
+                .map(ProduitTrancheage::getIdProduit)
+                .toList();
+
+        produits = produits.stream()
+                .filter(p -> produitsAvecTranche.contains(p.getIdProduit()))
+                .toList();
+    }
+
+    if (idTypeSelection != null) {
+        if (date != null && !date.isEmpty()) {
+            List<Selection> selections = selectionRepository.findByTypeSelectionIdTypeSelectionAndDateDebutLessThanEqualAndDateFinGreaterThanEqual(
+                    idTypeSelection, date, date);
+
+            List<Integer> idsProduits = selections.stream()
+                    .map(Selection::getProduit) // Pour chaque sélection, récupérer le produit associé
+                    .map(Produit::getIdProduit) // Extraire l'ID du produit
+                    .collect(Collectors.toList());
+
+            // Filtrer les produits en fonction des produits associés aux sélections filtrées
+            produits = produits.stream()
+                    .filter(p -> idsProduits.contains(p.getIdProduit())) // Garder uniquement les produits valides
+                    .collect(Collectors.toList());
+        } else {
+            // Si date est null ou vide, récupérer tous les produits associés au type de sélection
+            List<Selection> selections = selectionRepository.findByTypeSelectionIdTypeSelection(idTypeSelection);
+
+            // Récupérer la liste de produits associés à ces sélections
+            List<Integer> idsProduits = selections.stream()
+                    .map(Selection::getProduit) // Pour chaque sélection, récupérer le produit associé
+                    .map(Produit::getIdProduit) // Extraire l'ID du produit
+                    .collect(Collectors.toList());
+
+            // Filtrer les produits en fonction des produits associés aux sélections filtrées
+            produits = produits.stream()
+                    .filter(p -> idsProduits.contains(p.getIdProduit())) // Garder uniquement les produits valides
+                    .collect(Collectors.toList());
+        }
+
+        
+    }
+    return produits;
+}
+
 
     
 
