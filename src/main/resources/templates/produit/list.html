@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>Liste des Produits</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link th:href="@{/assets/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+  <link th:href="@{/assets/vendor/bootstrap-icons/bootstrap-icons.css}" rel="stylesheet">
+  <link th:href="@{/assets/vendor/boxicons/css/boxicons.min.css}" rel="stylesheet">
+  <link th:href="@{/assets/vendor/quill/quill.snow.css}" rel="stylesheet">
+  <link th:href="@{/assets/vendor/simple-datatables/style.css}" rel="stylesheet">
+
+  <!-- Template Main CSS File -->
+  <link th:href="@{/assets/css/style.css}" rel="stylesheet">
+</head>
+
+<body>
+  <!-- Header -->
+  <header id="header" class="header fixed-top d-flex align-items-center">
+    <div class="d-flex align-items-center justify-content-between">
+      <a href="@{/}" class="logo d-flex align-items-center">
+        <img src="assets/img/logo.png" alt="">
+        <span class="d-none d-lg-block">Pharmacie</span>
+      </a>
+      <i class="bi bi-list toggle-sidebar-btn"></i>
+    </div>
+  </header>
+
+  <div th:replace="fragments/navbar :: sidebar"></div>
+
+  <!-- Main Content -->
+  <!-- Main Content -->
+<main id="main" class="main">
+  <div class="pagetitle">
+    <h1>Liste des Produits</h1>
+  </div>
+  <section class="section">
+    <div class="row">
+      <!-- Titre et bouton pour afficher/masquer -->
+      <div class="row mb-3">
+        <div class="col-12 d-flex justify-content-between align-items-center">
+          <h5>Filtres de recherche</h5>
+          <button class="btn btn-primary btn-sm" id="toggleFilterBtn">Afficher/masquer le filtre</button>
+        </div>
+      </div>
+
+      <!-- Carte contenant le formulaire -->
+      <div class="card col-lg-5 d-none" id="filterForm">
+        <div class="card-body">
+          <h5 class="card-title">Filtres</h5>
+
+          <!-- Formulaire avec Floating Labels -->
+          <form method="get" th:action="@{'/produits'}" class="row g-3">
+            <!-- Sélection des symptômes -->
+            <div class="col-md-6">
+              <div class="form-floating">
+                <select name="idSymptome" id="idSymptome" class="form-select">
+                  <option value="">Tous</option>
+                  <option th:each="symptome : ${symptomes}" 
+                          th:value="${symptome.idSymptome}" 
+                          th:text="${symptome.nomSymptome}" 
+                          th:selected="${idSymptome == symptome.idSymptome}">
+                  </option>
+                </select>
+                <label for="idSymptome">Symptôme</label>
+              </div>
+            </div>
+
+            <!-- Sélection de la tranche d'âge -->
+            <div class="col-md-6">
+              <div class="form-floating">
+                <select name="idTrancheage" id="idTrancheage" class="form-select">
+                  <option value="">Toutes</option>
+                  <option th:each="tranche : ${tranches}" 
+                          th:value="${tranche.idTrancheage}" 
+                          th:text="${tranche.nomTranche}" 
+                          th:selected="${idTrancheage == tranche.idTrancheage}"></option>
+                </select>
+                <label for="idTrancheage">Tranche d'âge</label>
+              </div>
+            </div>
+
+            <!-- Sélection du type de sélection -->
+            <div class="col-md-6">
+              <div class="form-floating">
+                <select name="idTypeSelection" id="idTypeSelection" class="form-select">
+                  <option value="">Tous</option>
+                  <option th:each="typeSelection : ${typeselections}" 
+                          th:value="${typeSelection.idTypeSelection}" 
+                          th:text="${typeSelection.nomSelection}" 
+                          th:selected="${idTypeSelection == typeSelection.idTypeSelection}">
+                  </option>
+                </select>
+                <label for="idTypeSelection">Type de sélection</label>
+              </div>
+            </div>
+
+            <!-- Sélection de la date -->
+            <div class="col-md-6">
+              <div class="form-floating">
+                <input type="date" name="date" id="date" class="form-control">
+                <label for="date">Date</label>
+              </div>
+            </div>
+
+            <!-- Boutons -->
+            <div class="text-center">
+              <button type="submit" class="btn btn-primary btn-sm">Filtrer</button>
+              <button type="reset" class="btn btn-secondary btn-sm">Réinitialiser</button>
+            </div>
+          </form>
+          <!-- Fin du formulaire -->
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Affichage de l'erreur si elle existe -->
+  <div th:if="${error}" class="alert alert-danger" role="alert">
+    <p th:text="${error}"></p>
+  </div>
+  <section class="section">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h5 class="card-title">Produits</h5>
+              <a th:href="@{/produits/add}" class="btn btn-primary">Ajouter Produit</a>
+            </div>
+
+            <!-- Table -->
+            <table class="table datatable">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Nom</th>
+                  <th>Prix</th>
+                  <th>Laboratoire</th>
+                  <th>Type</th>
+                  <th>Domaine</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:each="produit : ${produits}">
+                  <td th:text="${produit.idProduit}"></td>
+                  <td th:text="${produit.nomProduit}"></td>
+                  <td th:text="${produit.prix} + ' Ar'"></td>
+                  <td th:text="${produit.laboratoire?.nomLaboratoire}"></td>
+                  <td th:text="${produit.typeproduit?.nomTypeproduit}"></td>
+                  <td th:text="${produit.domaine?.nomDomaine}"></td>
+                  <td>
+                    <a th:href="@{'/produits/edit/' + ${produit.idProduit}}" class="btn btn-warning btn-sm">Modifier</a>
+                    <a th:href="@{'/produits/delete/' + ${produit.idProduit}}" class="btn btn-danger btn-sm" onclick="return confirm('Confirmer la suppression ?')">Supprimer</a>
+                    <a th:href="@{'/produits/details/' + ${produit.idProduit}}" class="btn btn-primary btn-sm">Details</a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+
+  <!-- Footer -->
+  <footer id="footer" class="footer">
+    <div class="copyright">
+      <strong><span>Pharmacie</span></strong>. All Rights Reserved
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('toggleFilterBtn').addEventListener('click', function () {
+      const filterForm = document.getElementById('filterForm');
+      filterForm.classList.toggle('d-none');
+    });
+  </script>
+  <!-- Vendor JS Files -->
+  <script th:src="@{/assets/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+  <script th:src="@{/assets/vendor/simple-datatables/simple-datatables.js}"></script>
+  <script th:src="@{/assets/js/main.js}"></script>
+</body>
+
+</html>

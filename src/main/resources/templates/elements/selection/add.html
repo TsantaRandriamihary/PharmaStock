@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Insertion / Modification des Selections</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Poppins|Nunito" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link th:href="@{/assets/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+  <link th:href="@{/assets/vendor/bootstrap-icons/bootstrap-icons.css}" rel="stylesheet">
+  <link th:href="@{/assets/css/style.css}" rel="stylesheet">
+</head>
+
+<body>
+  <!-- Header -->
+  <header id="header" class="header fixed-top d-flex align-items-center">
+    <div class="d-flex align-items-center justify-content-between">
+      <a href="@{/}" class="logo d-flex align-items-center">
+        <img src="assets/img/logo.png" alt="">
+        <span class="d-none d-lg-block">Pharmacie</span>
+      </a>
+      <i class="bi bi-list toggle-sidebar-btn"></i>
+    </div>
+  </header>
+
+  <div th:replace="fragments/navbar :: sidebar"></div>
+
+  <!-- Main Content -->
+  <main id="main" class="main">
+    <div class="pagetitle">
+      <h1>Insertion / Modification de Sélection</h1>
+    </div>
+
+    <section class="section">
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Formulaire d'insertion de sélection</h5>
+
+              <!-- Affichage des erreurs -->
+              <div th:if="${error}" class="alert alert-danger" role="alert">
+                <p th:text="${error}"></p>
+              </div>
+
+              <!-- Formulaire d'insertion -->
+              <form th:action="@{/selections/save}" method="post" class="row g-3">
+
+                <!-- Type de sélection -->
+                <div class="col-md-6">
+                  <label for="typeSelection" class="form-label">Type de Sélection</label>
+                  <select id="typeSelection" class="form-select" name="idTypeSelection" required>
+                    <option th:each="type : ${typeselection}" th:value="${type.idTypeSelection}" th:text="${type.nomSelection}"></option>
+                  </select>
+                </div>
+
+                <!-- Produit -->
+                <div class="col-md-6">
+                  <label for="produit" class="form-label">Produit</label>
+                  <select id="produit" class="form-select" name="idProduit" required>
+                    <option th:each="produit : ${produits}" th:value="${produit.idProduit}" th:text="${produit.nomProduit}"></option>
+                  </select>
+                </div>
+
+                <!-- Description -->
+                <div class="col-md-12">
+                  <label for="description" class="form-label">Description</label>
+                  <textarea class="form-control" id="description" name="description" rows="4" required></textarea>
+                </div>
+
+                <!-- Date début -->
+                <div class="col-md-6">
+                  <label for="dateDebut" class="form-label">Date de début</label>
+                  <input type="date" class="form-control" id="dateDebut" name="dateDebut" required>
+                </div>
+
+                <!-- Date fin -->
+                <div class="col-md-6">
+                  <label for="dateFin" class="form-label">Date de fin</label>
+                  <input type="date" class="form-control" id="dateFin" name="dateFin" required>
+                </div>
+
+                <!-- Boutons -->
+                <div class="text-center">
+                  <button type="submit" class="btn btn-primary">Enregistrer</button>
+                  <button type="reset" class="btn btn-secondary">Réinitialiser</button>
+                </div>
+              </form>
+              <!-- Fin du formulaire -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  
+  <!-- Footer -->
+  <footer id="footer" class="footer">
+    <div class="copyright">
+      <strong><span>Pharmacie</span></strong>. Tous droits réservés.
+    </div>
+  </footer>
+
+  <!-- Vendor JS Files -->
+  <script th:src="@{/assets/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+  <script th:src="@{/assets/js/main.js}"></script>
+</body>
+
+</html>

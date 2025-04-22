@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>Insertion / Modification des Produits</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Poppins|Nunito" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link th:href="@{/assets/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+  <link th:href="@{/assets/vendor/bootstrap-icons/bootstrap-icons.css}" rel="stylesheet">
+  <link th:href="@{/assets/css/style.css}" rel="stylesheet">
+</head>
+
+<body>
+  <!-- Header -->
+  <header id="header" class="header fixed-top d-flex align-items-center">
+    <div class="d-flex align-items-center justify-content-between">
+      <a href="@{/}" class="logo d-flex align-items-center">
+        <img src="assets/img/logo.png" alt="">
+        <span class="d-none d-lg-block">Pharmacie</span>
+      </a>
+      <i class="bi bi-list toggle-sidebar-btn"></i>
+    </div>
+  </header>
+
+  <div th:replace="fragments/navbar :: sidebar"></div>
+
+  <!-- Main Content -->
+  <main id="main" class="main">
+    <div class="pagetitle">
+      <h1>Insertion / Modification des Produits</h1>
+    </div>
+
+    <section class="section">
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Formulaire d'insertion/modification de produit</h5>
+
+              <!-- Affichage de l'erreur -->
+              <div th:if="${error}" class="alert alert-danger" role="alert">
+                <p th:text="${error}"></p>
+              </div>
+
+              <!-- Formulaire d'insertion/modification -->
+              <form th:action="@{${produit?.idProduit != null} ? '/produits/update' : '/produits/save'}" 
+                    method="post" class="row g-3">
+                <!-- Champ caché pour l'ID si modification -->
+                <input type="hidden" name="idProduit" th:value="${produit?.idProduit}" />
+                <!-- Date -->
+                <div class="col-md-6">
+                  <label for="date" class="form-label">Date reference</label>
+                  <input type="date" class="form-control" id="date" name="date" 
+                         th:value="${date}" required>
+                </div>
+                <!-- Nom du produit -->
+                <div class="col-md-6">
+                  <label for="nomProduit" class="form-label">Nom du Produit</label>
+                  <input type="text" class="form-control" id="nomProduit" name="nomProduit" 
+                         th:value="${produit?.nomProduit}" required>
+                </div>
+
+                <div class="col-md-6">
+                  <label for="typeproduit" class="form-label">Type du produit</label>
+                  <select id="typeproduit" class="form-select" name="typeproduit" required>
+                    <option th:each="d : ${types}" th:value="${d.idTypeproduit}" 
+                            th:text="${d.nomTypeproduit}" 
+                            th:selected="${d.idTypeproduit == produit?.typeproduit?.idTypeproduit}">
+                      Sélectionnez un type
+                    </option>
+                  </select>
+                </div>
+                
+
+                <!-- Description -->
+                <div class="col-md-6">
+                  <label for="descriptionProduit" class="form-label">Description</label>
+                  <input type="text" class="form-control" id="descriptionProduit" name="descriptionProduit" 
+                         th:value="${produit?.descriptionProduit}" required>
+                </div>
+
+                <!-- Quantité Unitaire -->
+                <div class="col-md-6">
+                  <label for="quantiteUnitaire" class="form-label">Quantité Unitaire</label>
+                  <input type="number" class="form-control" id="quantiteUnitaire" name="quantiteUnitaire" 
+                         th:value="${produit?.quantiteUnitaire}" required>
+                </div>
+
+                <!-- Dose -->
+                <div class="col-md-6">
+                  <label for="dose" class="form-label">Dose</label>
+                  <input type="number" step="0.01" class="form-control" id="dose" name="dose" 
+                         th:value="${produit?.dose}" required>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="unite" class="form-label">Unite</label>
+                    <select id="unite" class="form-select" name="unite">
+                      <option th:each="u : ${unites}" th:value="${u.idUnite}" 
+                              th:text="${u.nomUnite}" 
+                              th:selected="${u.idUnite == produit?.unite?.idUnite}"></option>
+                    </select>
+                  </div>
+
+                <!-- Prix -->
+                <div class="col-md-6">
+                  <label for="prix" class="form-label">Prix</label>
+                  <input type="number" step="0.01" class="form-control" id="prix" name="prix" 
+                         th:value="${produit?.prix}" required>
+                </div>
+
+                <!-- Forme -->
+                <div class="col-md-6">
+                  <label for="forme" class="form-label">Forme</label>
+                  <select id="forme" class="form-select" name="forme" required>
+                    <option th:each="f : ${formes}" th:value="${f.idForme}" 
+                            th:text="${f.nomForme}" 
+                            th:selected="${f.idForme == produit?.forme?.idForme}"></option>
+                  </select>
+                </div>
+
+                <!-- Classe -->
+                <div class="col-md-6">
+                  <label for="classe" class="form-label">Classe</label>
+                  <select id="classe" class="form-select" name="classe">
+                    <option th:each="c : ${classes}" th:value="${c.idClasse}" 
+                            th:text="${c.nomClasse}" 
+                            th:selected="${c.idClasse == produit?.classe?.idClasse}"></option>
+                  </select>
+                </div>
+
+                <!-- Laboratoire -->
+                <div class="col-md-6">
+                  <label for="laboratoire" class="form-label">Laboratoire</label>
+                  <select id="laboratoire" class="form-select" name="laboratoire" required>
+                    <option th:each="l : ${laboratoires}" th:value="${l.idLaboratoire}" 
+                            th:text="${l.nomLaboratoire}" 
+                            th:selected="${l.idLaboratoire == produit?.laboratoire?.idLaboratoire}"></option>
+                  </select>
+                </div>
+
+                <!-- Domaine -->
+                <div class="col-md-6">
+                  <label for="domaine" class="form-label">Domaine</label>
+                  <select id="domaine" class="form-select" name="domaine">
+                    <option th:each="d : ${domaines}" th:value="${d.idDomaine}" 
+                            th:text="${d.nomDomaine}" 
+                            th:selected="${d.idDomaine == produit?.domaine?.idDomaine}"></option>
+                  </select>
+                </div>
+
+                <!-- Boutons -->
+                <div class="text-center">
+                  <button type="submit" class="btn btn-primary" 
+                          th:text="${produit?.idProduit != null ? 'Modifier' : 'Enregistrer'}"></button>
+                  <button type="reset" class="btn btn-secondary">Réinitialiser</button>
+                </div>
+              </form>
+              <!-- Fin du formulaire -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer id="footer" class="footer">
+    <div class="copyright">
+      <strong><span>Pharmacie</span></strong>. Tous droits réservés.
+    </div>
+  </footer>
+
+  <!-- Vendor JS Files -->
+  <script th:src="@{/assets/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+  <script th:src="@{/assets/js/main.js}"></script>
+</body>
+
+</html>

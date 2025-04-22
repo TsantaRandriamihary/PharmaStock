@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Insertion / Modification des Mouvements de Stock</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Poppins|Nunito" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link th:href="@{/assets/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+  <link th:href="@{/assets/vendor/bootstrap-icons/bootstrap-icons.css}" rel="stylesheet">
+  <link th:href="@{/assets/css/style.css}" rel="stylesheet">
+</head>
+
+<body>
+  <header id="header" class="header fixed-top d-flex align-items-center">
+    <div class="d-flex align-items-center justify-content-between">
+      <a href="@{/}" class="logo d-flex align-items-center">
+        <img src="assets/img/logo.png" alt="">
+        <span class="d-none d-lg-block">Pharmacie</span>
+      </a>
+      <i class="bi bi-list toggle-sidebar-btn"></i>
+    </div>
+  </header>
+
+  <div th:replace="fragments/navbar :: sidebar"></div>
+
+  <main id="main" class="main">
+    <div class="pagetitle">
+      <h1>Insertion / Modification des Mouvements de Stock</h1>
+    </div>
+
+    <section class="section">
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Formulaire de Mouvement de Stock</h5>
+
+              <!-- Affichage des erreurs -->
+              <div th:if="${error}" class="alert alert-danger" role="alert">
+                <p th:text="${error}"></p>
+              </div>
+
+              <!-- Formulaire -->
+              <form th:action="@{${idMouvement != null} ? '/mouvement-stock/update/' + ${idMouvement} : '/mouvement-stock/save'}"
+                    method="post" class="row g-3">
+
+                <!-- Champ caché pour l'ID si modification -->
+                <div th:if="${idMouvement != null}">
+                  <input type="hidden" name="idMouvement" th:value="${idMouvement}" />
+                </div>
+
+                <!-- Date du Mouvement -->
+                <div class="col-md-6">
+                  <label for="dateMouvement" class="form-label">Date du Mouvement</label>
+                  <input type="date" class="form-control" id="dateMouvement" name="dateMouvement" 
+                        th:value="${dateMouvement != null ? dateMouvement : ''}" required>
+                </div>
+
+                <!-- Détails des Mouvements -->
+                <div id="mouvementStockDetailsContainer">
+                  <h6 class="card-title">Détails du Mouvement</h6>
+                  <div id="mouvementStockDetailsList">
+                    <!-- Si des lots, entrées, et sorties existent -->
+                    <div th:if="${lotId != null && lotId.size() > 0}">
+                      <div th:each="lotIndex : ${#numbers.sequence(0, lotId.size() - 1)}" class="row g-3 mb-2">
+                        <div class="col-md-4">
+                          <label class="form-label">Lot</label>
+                          <select class="form-select" name="lotId" required>
+                            <option th:each="lot : ${lots}" 
+                                    th:value="${lot.idLot}" 
+                                    th:selected="${lot.idLot == lotId[lotIndex]}" 
+                                    th:text="'Lot No '+${lot.idLot}+' - '+${lot.produit.nomProduit}">
+                            </option>
+                          </select>
+                        </div>
+                        <div class="col-md-3">
+                          <label class="form-label">Entrée</label>
+                          <input type="number" class="form-control" name="entree" 
+                                th:value="${entree[lotIndex]}" required>
+                        </div>
+                        <div class="col-md-3">
+                          <label class="form-label">Sortie</label>
+                          <input type="number" class="form-control" name="sortie" 
+                                th:value="${sortie[lotIndex]}" required>
+                        </div>
+                        <div class="col-md-2 d-flex align-items-center">
+                          <button type="button" class="btn btn-danger remove-detail">Supprimer</button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Sinon, formulaire vide pour ajout -->
+                    <div th:if="${lotId == null || lotId.size() == 0}">
+                      <div class="row g-3 mb-2">
+                        <div class="col-md-4">
+                          <label class="form-label">Lot</label>
+                          <select class="form-select" name="lotId" required>
+                            <option th:each="lot : ${lots}" 
+                                    th:value="${lot.idLot}" 
+                                    th:text="'Lot No '+${lot.idLot}+' - '+${lot.produit.nomProduit}">
+                            </option>
+                          </select>
+                        </div>
+                        <div class="col-md-3">
+                          <label class="form-label">Entrée</label>
+                          <input type="number" class="form-control" name="entree" required>
+                        </div>
+                        <div class="col-md-3">
+                          <label class="form-label">Sortie</label>
+                          <input type="number" class="form-control" name="sortie" required>
+                        </div>
+                        <div class="col-md-2 d-flex align-items-center">
+                          <button type="button" class="btn btn-danger remove-detail">Supprimer</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Bouton pour ajouter un détail -->
+                  <button type="button" id="addDetailButton" class="btn btn-primary mt-2">Ajouter un détail</button>
+                </div>
+
+                <!-- Boutons -->
+                <div class="text-center mt-3">
+                  <button type="submit" class="btn btn-success">
+                    <span th:text="${idMouvement != null ? 'Modifier' : 'Enregistrer'}"></span>
+                  </button>
+                  <button type="reset" class="btn btn-secondary">Réinitialiser</button>
+                </div>
+              </form>
+
+
+              <!-- Modèle caché pour un détail vide -->
+            <div id="mouvementStockDetailTemplate" class="row g-3 mb-2" style="display: none;">
+              <div class="col-md-4">
+                <label class="form-label">Lot</label>
+                <select class="form-select" name="lotId" required>
+                  <option th:each="lot : ${lots}" 
+                          th:value="${lot.idLot}" 
+                          th:text="'Lot No '+${lot.idLot}+' - '+${lot.produit.nomProduit}">
+                  </option>
+                </select>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Entrée</label>
+                <input type="number" class="form-control" name="entree" required>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Sortie</label>
+                <input type="number" class="form-control" name="sortie" required>
+              </div>
+              <div class="col-md-2 d-flex align-items-center">
+                <button type="button" class="btn btn-danger remove-detail">Supprimer</button>
+              </div>
+            </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer id="footer" class="footer">
+    <div class="copyright">
+      <strong><span>Pharmacie</span></strong>. Tous droits réservés.
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script th:src="@{/assets/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+  <script th:src="@{/assets/js/main.js}"></script>
+  <script>
+    document.getElementById('addDetailButton').addEventListener('click', function () {
+      var template = document.getElementById('mouvementStockDetailTemplate');
+      var newDetail = template.cloneNode(true);
+      newDetail.style.display = ''; 
+      newDetail.id = ''; 
+
+      newDetail.querySelector('.remove-detail').addEventListener('click', function () {
+          newDetail.remove();
+      });
+
+      document.getElementById('mouvementStockDetailsList').appendChild(newDetail);
+    });
+
+    document.querySelectorAll('.remove-detail').forEach(button => {
+      button.addEventListener('click', function () {
+          button.closest('.row').remove();
+      });
+    });
+
+  </script>
+</body>
+</html>

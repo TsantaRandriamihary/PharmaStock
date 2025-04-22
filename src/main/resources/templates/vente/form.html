@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Insertion / Modification des Ventes</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Poppins|Nunito" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link th:href="@{/assets/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+  <link th:href="@{/assets/vendor/bootstrap-icons/bootstrap-icons.css}" rel="stylesheet">
+  <link th:href="@{/assets/css/style.css}" rel="stylesheet">
+</head>
+
+<body>
+  <!-- Header -->
+  <header id="header" class="header fixed-top d-flex align-items-center">
+    <div class="d-flex align-items-center justify-content-between">
+      <a href="@{/}" class="logo d-flex align-items-center">
+        <img src="assets/img/logo.png" alt="">
+        <span class="d-none d-lg-block">Pharmacie</span>
+      </a>
+      <i class="bi bi-list toggle-sidebar-btn"></i>
+    </div>
+  </header>
+
+  <div th:replace="fragments/navbar :: sidebar"></div>
+
+  <!-- Main Content -->
+  <main id="main" class="main">
+    <div class="pagetitle">
+      <h1>Insertion / Modification des Ventes</h1>
+    </div>
+
+    <section class="section">
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Formulaire d'insertion de vente</h5>
+             
+              <!-- Affichage de l'erreur -->
+              <div th:if="${error}" class="alert alert-danger" role="alert">
+                <p th:text="${error}"></p>
+              </div>
+
+              <form th:action="@{${idVente != null} ? '/ventes/update/' + ${idVente} : '/ventes/save'}"
+                    method="post" class="row g-3">
+
+                <!-- Champ caché pour l'ID si modification -->
+                <input type="hidden" name="idVente" th:value="${idVente}" />
+
+                <!-- Description de la vente -->
+                <div class="col-md-6">
+                  <label for="descriptionVente" class="form-label">Description de la vente</label>
+                  <input type="text" class="form-control" id="descriptionVente" name="descriptionVente" 
+                        th:value="${descriptionVente}" required>
+                </div>
+
+                <!-- Date de la vente -->
+                <div class="col-md-6">
+                  <label for="dateVente" class="form-label">Date de la vente</label>
+                  <input type="date" class="form-control" id="dateVente" name="dateVente" 
+                        th:value="${dateVente}" required>
+                </div>
+
+                <!-- Client -->
+                <div class="col-md-6">
+                  <label for="clientId" class="form-label">Client</label>
+                  <select class="form-select" id="clientId" name="clientId" required>
+                    <option value="">Aucun</option>
+                    <option th:each="c : ${clients}" th:value="${c.idClient}"
+                            th:text="${c.nomClient}" th:selected="${clientId == c.idClient}"></option>
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label for="vendeurId" class="form-label">Vendeur</label>
+                  <select class="form-select" id="vendeurId" name="vendeurId" required>
+                    <option value="">Aucun</option>
+                    <option th:each="c : ${vendeur}" th:value="${c.idVendeur}"
+                            th:text="${c.nomVendeur}" th:selected="${vendeurId == c.idVendeur}"></option>
+                  </select>
+                </div>
+
+
+                <!-- Détails de la vente -->
+                <div id="venteDetailsContainer">
+                  <h6 class="card-title">Détails de la vente</h6>
+                
+                  <div id="venteDetailsList">
+                    <!-- Les groupes de détails existants (ou groupe vide si en mode création) -->
+                    <div th:if="${idVente != null}" th:each="detail : ${venteDetails}">
+                      <div class="venteDetailGroup row g-3">
+                        <!-- Champ Produit -->
+                        <div class="col-md-6">
+                          <label for="produitId" class="form-label">Produit</label>
+                          <select class="form-select" name="produitId" required>
+                            <option th:each="produit : ${produits}" th:value="${produit.idProduit}"
+                                    th:text="${produit.nomProduit}"
+                                    th:selected="${detail.lot.produit.idProduit == produit.idProduit}"></option>
+                          </select>
+                        </div>
+                
+                        <!-- Champ Quantité Vendue -->
+                        <div class="col-md-6">
+                          <label for="quantiteVendue" class="form-label">Quantité vendue</label>
+                          <input type="number" class="form-control" name="quantiteVendue"
+                                th:value="${detail.quantiteVendue}" required>
+                        </div>
+                      </div>
+                    </div>
+                
+                    <!-- Groupe vide si en mode création -->
+                    <div th:if="${idVente == null}">
+                      <div class="venteDetailGroup row g-3">
+                        <!-- Produit -->
+                        <div class="col-md-6">
+                          <label for="produitId" class="form-label">Produit</label>
+                          <select class="form-select" name="produitId" required>
+                            <option th:each="produit : ${produits}" th:value="${produit.idProduit}" 
+                                    th:text="${produit.nomProduit}"></option>
+                          </select>
+                        </div>
+                
+                        <!-- Quantité vendue -->
+                        <div class="col-md-6">
+                          <label for="quantiteVendue" class="form-label">Quantité vendue</label>
+                          <input type="number" class="form-control" name="quantiteVendue" required>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                
+                  <!-- Bouton pour ajouter un nouveau détail -->
+                  <button type="button" id="addDetailButton"
+                          style="background-color: #007bff; color: #fff; border: none; border-radius: 5px; padding: 5px 10px; font-size: 14px; width: 20%; margin-top: 10px;">
+                    Ajouter un détail
+                  </button>
+                </div>
+                
+                
+                <!-- Boutons -->
+                <div class="text-center mt-4">
+                  <button type="submit" class="btn btn-primary" 
+                          th:text="${vente?.idVente != null ? 'Modifier' : 'Enregistrer'}"></button>
+                  <button type="reset" class="btn btn-secondary">Réinitialiser</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer id="footer" class="footer">
+    <div class="copyright">
+      <strong><span>Pharmacie</span></strong>. Tous droits réservés.
+    </div>
+  </footer>
+
+  <!-- Vendor JS Files -->
+  <script th:src="@{/assets/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+  <script th:src="@{/assets/js/main.js}"></script>
+
+  <script>
+    document.getElementById('addDetailButton').addEventListener('click', function () {
+      var detailTemplate = document.querySelector('.venteDetailGroup');
+      var newDetailGroup = detailTemplate.cloneNode(true);
+  
+      var selectProduit = newDetailGroup.querySelector('select[name="produitId"]');
+      var inputQuantiteVendue = newDetailGroup.querySelector('input[name="quantiteVendue"]');
+  
+      selectProduit.value = ''; 
+      inputQuantiteVendue.value = ''; 
+  
+      var container = document.getElementById('venteDetailsList');
+      container.appendChild(newDetailGroup);
+    });
+  </script>
+  
+</body>
+
+</html>

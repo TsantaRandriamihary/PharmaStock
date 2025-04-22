@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Détails Mouvement de Stock - Pharmacie</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link th:href="@{/assets/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+  <link th:href="@{/assets/vendor/bootstrap-icons/bootstrap-icons.css}" rel="stylesheet">
+  <link th:href="@{/assets/vendor/boxicons/css/boxicons.min.css}" rel="stylesheet">
+  <link th:href="@{/assets/vendor/simple-datatables/style.css}" rel="stylesheet">
+
+  <!-- Template Main CSS File -->
+  <link th:href="@{/assets/css/style.css}" rel="stylesheet">
+</head>
+
+<body>
+
+  <!-- ======= Header ======= -->
+  <header id="header" class="header fixed-top d-flex align-items-center">
+    <div class="d-flex align-items-center justify-content-between">
+      <a href="index.html" class="logo d-flex align-items-center">
+        <img src="assets/img/logo.png" alt="">
+        <span class="d-none d-lg-block">Pharmacie</span>
+      </a>
+      <i class="bi bi-list toggle-sidebar-btn"></i>
+    </div>
+  </header>
+
+  <div th:replace="fragments/navbar :: sidebar"></div>
+  
+
+  <!-- ======= Main Content ======= -->
+  <main id="main" class="main">
+    <div class="pagetitle">
+      <h1>Détails Mouvement de Stock</h1>
+    </div>
+
+    <section class="section">
+      <div class="row">
+        <div class="col-xl-12">
+          <div class="card">
+            <div class="card-body pt-3">
+
+              <!-- Tabs Navigation -->
+              <ul class="nav nav-tabs nav-tabs-bordered">
+                <li class="nav-item">
+                  <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#mouvement-info">Infos Mouvement</button>
+                </li>
+                <li class="nav-item">
+                  <button class="nav-link" data-bs-toggle="tab" data-bs-target="#mouvement-details-list">Produits du Mouvement</button>
+                </li>
+              </ul>
+
+              <div class="tab-content pt-2">
+                <!-- Tab 1: Informations du Mouvement -->
+                <div class="tab-pane fade show active" id="mouvement-info">
+                  <h5 class="card-title">Informations sur le Mouvement</h5>
+                  
+                  <div class="row mb-3">
+                    <div class="col-lg-3 col-md-4 label fw-semibold">Référence Mouvement</div>
+                    <div class="col-lg-9 col-md-8" th:text="${mouvementStock.reference}"></div>
+                  </div>
+
+                  <div class="row mb-3">
+                    <div class="col-lg-3 col-md-4 label fw-semibold">Type de Mouvement</div>
+                    <div class="col-lg-9 col-md-8" th:text="${mouvementStock.estAchat == true ? 'Achat' : (mouvementStock.estAchat == false ? 'Vente' : 'Mouvement')}"></div>
+                  </div>
+
+                  <div class="row mb-3">
+                    <div class="col-lg-3 col-md-4 label fw-semibold">Date</div>
+                    <div class="col-lg-9 col-md-8" th:text="${mouvementStock.dateMouvement}"></div>
+                  </div>
+
+                </div>
+
+                <!-- Tab 2: Détails du Mouvement -->
+                <div class="tab-pane fade" id="mouvement-details-list">
+                  <h5 class="card-title">Produits liés au Mouvement</h5>
+
+                  <table class="table datatable">
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>ID Lot</th>
+                        <th>Produit</th>
+                        <th>Quantité Entrée</th>
+                        <th>Quantité Sortie</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr th:each="detail, iter : ${mouvementStockDetails}">
+                        <td th:text="${iter.index + 1}"></td>
+                        <td th:text="${detail.lot.idLot}"></td>
+                        <td th:text="${detail.lot.produit.nomProduit}"></td>
+                        <td th:text="${detail.entree}"></td>
+                        <td th:text="${detail.sortie}"></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ======= Footer ======= -->
+  <footer id="footer" class="footer">
+    <div class="copyright">
+      <strong><span>Pharmacie</span></strong>. Tous droits réservés.
+    </div>
+  </footer>
+
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Vendor JS Files -->
+  <script th:src="@{/assets/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+  <script th:src="@{/assets/vendor/simple-datatables/simple-datatables.js}"></script>
+  <script th:src="@{/assets/js/main.js}"></script>
+
+</body>
+
+</html>

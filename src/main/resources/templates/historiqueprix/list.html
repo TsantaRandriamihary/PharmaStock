@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>Historique des Prix</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link th:href="@{/assets/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+  <link th:href="@{/assets/vendor/bootstrap-icons/bootstrap-icons.css}" rel="stylesheet">
+  <link th:href="@{/assets/vendor/boxicons/css/boxicons.min.css}" rel="stylesheet">
+  <link th:href="@{/assets/css/style.css}" rel="stylesheet">
+</head>
+
+<body>
+  <!-- Header -->
+  <header id="header" class="header fixed-top d-flex align-items-center">
+    <div class="d-flex align-items-center justify-content-between">
+      <a href="@{/}" class="logo d-flex align-items-center">
+        <img src="assets/img/logo.png" alt="">
+        <span class="d-none d-lg-block">Pharmacie</span>
+      </a>
+      <i class="bi bi-list toggle-sidebar-btn"></i>
+    </div>
+  </header>
+
+  <div th:replace="fragments/navbar :: sidebar"></div>
+
+  <!-- Main Content -->
+  <main id="main" class="main">
+    <div class="pagetitle">
+      <h1>Historique des Prix</h1>
+    </div>
+    <!-- Affichage de l'erreur si elle existe -->
+    <div th:if="${error}" class="alert alert-danger" role="alert">
+      <p th:text="${error}"></p>
+    </div>
+    <section class="section">
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Historique des Prix par Produit</h5>
+
+              <!-- Iterate through products -->
+              <div th:each="entry : ${priceHistoryByProduct}">
+                <h4 class="mt-4" th:text="'Produit: ' + ${entry.key}"></h4>
+
+                <!-- Table -->
+                <table class="table datatable">
+                  <thead>
+                    <tr>
+                      <th>ID Historique Prix</th>
+                      <th>Prix</th>
+                      <th>Date de Changement</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <!-- Iterate through historiques for each product -->
+                    <tr th:each="historique : ${entry.value}">
+                      <td th:text="${historique.idHistoriquePrix}"></td>
+                      <td th:text="${historique.prix} + ' €'"></td>
+                      <td th:text="${#dates.format(historique.dateChangement, 'dd/MM/yyyy HH:mm')}"></td>
+                      
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <!-- End product section -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer id="footer" class="footer">
+    <div class="copyright">
+      <strong><span>Pharmacie</span></strong>. Tous droits réservés.
+    </div>
+  </footer>
+
+  <!-- Vendor JS Files -->
+  <script th:src="@{/assets/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+  <script th:src="@{/assets/vendor/simple-datatables/simple-datatables.js}"></script>
+  <script th:src="@{/assets/js/main.js}"></script>
+</body>
+
+</html>
