@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-  <title>Ajouter Tranche d'âge au Produit</title>
+  <title>Ajouter un Vendeur</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
 
@@ -16,11 +16,6 @@
   <!-- Vendor CSS Files -->
   <link th:href="@{/assets/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
   <link th:href="@{/assets/vendor/bootstrap-icons/bootstrap-icons.css}" rel="stylesheet">
-  <link th:href="@{/assets/vendor/boxicons/css/boxicons.min.css}" rel="stylesheet">
-  <link th:href="@{/assets/vendor/quill/quill.snow.css}" rel="stylesheet">
-  <link th:href="@{/assets/vendor/simple-datatables/style.css}" rel="stylesheet">
-
-  <!-- Template Main CSS File -->
   <link th:href="@{/assets/css/style.css}" rel="stylesheet">
 </head>
 
@@ -35,66 +30,53 @@
       <i class="bi bi-list toggle-sidebar-btn"></i>
     </div>
   </header>
-
+    
   <div th:replace="fragments/navbar :: sidebar"></div>
-     
-  <!-- Main Content -->
-  <main id="main" class="main">
+  
+ <!-- Main Content -->
+<main id="main" class="main">
     <div class="pagetitle">
-      <h1>Ajouter Tranche d'âge au Produit</h1>
+      <h1>Ajouter un Vendeur</h1>
     </div>
-
     <section class="section">
       <div class="row">
-        <div class="col-lg-12">
+        <div class="col-lg-6">
           <div class="card">
             <div class="card-body">
               <h5 class="card-title">Formulaire d'Ajout</h5>
-
-              <!-- Affichage de l'erreur si elle existe -->
-              <div th:if="${error}" class="alert alert-danger" role="alert">
-                <p th:text="${error}"></p>
-              </div>
-
-              <!-- Formulaire -->
-              <form th:action="@{/produittrancheage/save}" method="post" class="row g-3">
-
-                <!-- Champ Hidden pour le ID Produit -->
-                <input type="hidden" th:value="${idProduit}" name="idProduit">
-
-                <!-- Sélection de la Tranche d'âge -->
-                <div class="col-md-6">
-                  <label for="idTrancheage" class="form-label">Tranche d'âge</label>
-                  <select class="form-select" id="idTrancheage" name="idTrancheage" required>
-                    <option th:each="tranche : ${trancheages}" 
-                            th:value="${tranche.idTrancheage}" 
-                            th:text="${tranche.nomTranche}"></option>
-                  </select>
+  
+              <!-- Formulaire d'Ajout de Vendeur -->
+              <form th:action="@{/vendeurs/save}" method="post">
+                <div class="mb-3">
+                  <label for="nomVendeur" class="form-label">Nom du Vendeur</label>
+                  <input type="text" class="form-control" id="nomVendeur" name="nomVendeur" placeholder="Entrez le nom du vendeur" required>
                 </div>
-
-                <!-- Boutons -->
-                <div class="text-center">
-                  <button type="submit" class="btn btn-primary">Enregistrer</button>
-                  <a th:href="@{'/produits/details/' + ${idProduit}}" class="btn btn-secondary">Annuler</a>
+  
+                
+  
+                <div class="mb-3">
+                  <button type="submit" class="btn btn-primary">Ajouter</button>
+                  <a th:href="@{/vendeurs}" class="btn btn-secondary">Annuler</a>
                 </div>
-              </form><!-- Fin du formulaire -->
+              </form>
+              <!-- Fin Formulaire -->
+  
             </div>
           </div>
         </div>
       </div>
     </section>
   </main>
-
+  
   <!-- Footer -->
   <footer id="footer" class="footer">
     <div class="copyright">
-      <strong><span>Pharmacie</span></strong>. Tous droits réservés
+      <strong><span>Pharmacie</span></strong>. Tous droits réservés.
     </div>
   </footer>
 
   <!-- Vendor JS Files -->
   <script th:src="@{/assets/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
-  <script th:src="@{/assets/vendor/simple-datatables/simple-datatables.js}"></script>
   <script th:src="@{/assets/js/main.js}"></script>
 </body>
 

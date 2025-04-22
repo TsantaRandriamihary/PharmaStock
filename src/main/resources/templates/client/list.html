@@ -32,156 +32,61 @@
     </div>
   </header>
 
-    <!-- ======= Sidebar ======= -->
-    <aside id="sidebar" class="sidebar">
-      <ul class="sidebar-nav" id="sidebar-nav">
-        <li class="nav-item">
-          <a class="nav-link " data-bs-target="#forms-nav" data-bs-toggle="collapse">
-            <i class="bi bi-journal-text"></i><span>Elements</span><i class="bi bi-chevron-down ms-auto"></i>
-          </a>
-          <ul id="forms-nav" class="nav-content collapse show" data-bs-parent="#sidebar-nav">
-            <li>
-              <a th:href="@{/substances}">
-                <i class="bi bi-circle"></i><span>Substances</span>
-              </a>
-            </li>
-            <li>
-              <a th:href="@{/symptomes}">
-                <i class="bi bi-circle"></i><span>Symptomes</span>
-              </a>
-            </li>
-            <li>
-              <a th:href="@{/agentsubstance}">
-                <i class="bi bi-circle"></i><span>Agent - Substance</span>
-              </a>
-            </li>
-            <li>
-              <a th:href="@{/substancesymptome}">
-                <i class="bi bi-circle"></i><span>Substance - Symptomes</span>
-              </a>
-            </li>
-            <li>
-              <a th:href="@{/lots}">
-                <i class="bi bi-circle"></i><span>Lots de produits</span>
-              </a>
-            </li>
-            <li>
-              <a th:href="@{/fournisseurs}">
-                <i class="bi bi-circle"></i><span>Fournisseurs</span>
-              </a>
-            </li>
-            <li>
-              <a th:href="@{/clients}">
-                <i class="bi bi-circle"></i><span>Clients</span>
-              </a>
-            </li>
-          </ul>
-        </li>
+  <div th:replace="fragments/navbar :: sidebar"></div>
   
-        <li class="nav-item">
-          <a class="nav-link collapsed" th:href="@{/maladies}">
-            <i class="bi bi-person"></i>
-            <span>Maladies</span>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link collapsed" th:href="@{/laboratoires}">
-            <i class="bi bi-person"></i>
-            <span>Laboratoires</span>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link collapsed" th:href="@{/produits}">
-            <i class="bi bi-person"></i>
-            <span>Produits</span>
-          </a>
-        </li>
-  
-        <li class="nav-item">
-          <a class="nav-link " data-bs-target="#forms-nav" data-bs-toggle="collapse">
-            <i class="bi bi-journal-text"></i><span>Transactions</span><i class="bi bi-chevron-down ms-auto"></i>
-          </a>
-          <ul id="forms-nav" class="nav-content collapse show" data-bs-parent="#sidebar-nav">
-            <li>
-              <a th:href="@{/achats}">
-                <i class="bi bi-circle"></i><span>Achats de produits</span>
-              </a>
-            </li>
-            <li>
-              <a th:href="@{/ventes}">
-                <i class="bi bi-circle"></i><span>Ventes de produits</span>
-              </a>
-            </li>
-          </ul>
-        </li>
-  
-        <li class="nav-item">
-          <a class="nav-link " data-bs-target="#forms-nav" data-bs-toggle="collapse">
-            <i class="bi bi-journal-text"></i><span>Gestion de stocks</span><i class="bi bi-chevron-down ms-auto"></i>
-          </a>
-          <ul id="forms-nav" class="nav-content collapse show" data-bs-parent="#sidebar-nav">
-            <li>
-              <a th:href="@{/mouvement-stock}">
-                <i class="bi bi-circle"></i><span>Mouvements de stock</span>
-              </a>
-            </li>
-            
-          </ul>
-        </li>
-        
-      </ul>
-    </aside>
-    <!-- End Sidebar -->
-
   <!-- Main Content -->
   <main id="main" class="main">
     <div class="pagetitle">
-      <h1>Liste des Clients</h1>
+        <h1>Statistique Client</h1>
     </div>
+
     <!-- Affichage de l'erreur si elle existe -->
     <div th:if="${error}" class="alert alert-danger" role="alert">
-      <p th:text="${error}"></p>
+        <p th:text="${error}"></p>
     </div>
-    <section class="section">
-      <div class="row">
-        <div class="col-lg-12">
-          <div class="card">
-            <div class="card-body">
-              <div class="d-flex justify-content-between align-items-center mb-3">
-                <h5 class="card-title">Clients</h5>
-                <a th:href="@{/clients/add}" class="btn btn-primary">Ajouter Client</a>
-              </div>
 
-              <!-- Table -->
-              <table class="table datatable">
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>Nom</th>
-                    <th>Contact</th>
-                    <th>Adresse</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr th:each="client : ${clients}">
-                    <td th:text="${client.idClient}"></td>
-                    <td th:text="${client.nomClient}"></td>
-                    <td th:text="${client.contactClient}"></td>
-                    <td th:text="${client.adresseClient}"></td>
-                    <td>
-                      <a th:href="@{'/clients/edit/' + ${client.idClient}}" class="btn btn-warning btn-sm">Modifier</a>
-                      <a th:href="@{'/clients/delete/' + ${client.idClient}}" class="btn btn-danger btn-sm" onclick="return confirm('Confirmer la suppression ?')">Supprimer</a>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+    <section class="section">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <!-- Search Filter -->
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="card-title">Statistiques des Clients</h5>
+                            <form th:action="@{/clients}" method="get" class="d-flex">
+                                <label for="date" class="me-2">Filtrer par Date:</label>
+                                <input type="date" name="date" id="date" class="form-control me-2" 
+                                       th:value="${selectedDate}">
+                                <button type="submit" class="btn btn-primary">Filtrer</button>
+                            </form>
+                        </div>
+
+                        <!-- Table -->
+                        <table class="table datatable">
+                            <thead>
+                                <tr>
+                                    <th>ID Client</th>
+                                    <th>Nom Client</th>
+                                    <th>Quantité Vendue Totale</th>
+                                    <th>Montant Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="entry : ${clientStats}">
+                                    <td th:text="${entry.key.idClient}"></td>
+                                    <td th:text="${entry.key.nomClient}"></td>
+                                    <td th:text="${entry.value['quantiteTotal']}"></td>
+                                    <td th:text="${entry.value['montantTotal']}"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
     </section>
-  </main>
+</main>
+
 
   <!-- Footer -->
   <footer id="footer" class="footer">

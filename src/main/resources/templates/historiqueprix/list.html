@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
 
-
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-  <title>Liste des substances</title>
+  <title>Historique des Prix</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
 
@@ -18,10 +17,6 @@
   <link th:href="@{/assets/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
   <link th:href="@{/assets/vendor/bootstrap-icons/bootstrap-icons.css}" rel="stylesheet">
   <link th:href="@{/assets/vendor/boxicons/css/boxicons.min.css}" rel="stylesheet">
-  <link th:href="@{/assets/vendor/quill/quill.snow.css}" rel="stylesheet">
-  <link th:href="@{/assets/vendor/simple-datatables/style.css}" rel="stylesheet">
-
-  <!-- Template Main CSS File -->
   <link th:href="@{/assets/css/style.css}" rel="stylesheet">
 </head>
 
@@ -42,7 +37,7 @@
   <!-- Main Content -->
   <main id="main" class="main">
     <div class="pagetitle">
-      <h1>Liste des Substances</h1>
+      <h1>Historique des Prix</h1>
     </div>
     <!-- Affichage de l'erreur si elle existe -->
     <div th:if="${error}" class="alert alert-danger" role="alert">
@@ -53,33 +48,33 @@
         <div class="col-lg-12">
           <div class="card">
             <div class="card-body">
-              <div class="d-flex justify-content-between align-items-center mb-3">
-                <h5 class="card-title">Substances</h5>
-                <a th:href="@{/substances/add}" class="btn btn-primary">Ajouter Substance</a>
-              </div>
+              <h5 class="card-title">Historique des Prix par Produit</h5>
 
-              <!-- Table -->
-              <table class="table datatable">
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>Nom de la Substance</th>
-                    <th>Description</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr th:each="substance, iterStat : ${substances}">
-                    <td th:text="${iterStat.index + 1}"></td>
-                    <td th:text="${substance.nomSubstance}"></td>
-                    <td th:text="${substance.descriptionSubstance}"></td>
-                    <td>
-                      <a th:href="@{'/substances/edit/' + ${substance.idSubstance}}" class="btn btn-warning btn-sm">Modifier</a>
-                      <a th:href="@{'/substances/delete/' + ${substance.idSubstance}}" class="btn btn-danger btn-sm">Supprimer</a>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+              <!-- Iterate through products -->
+              <div th:each="entry : ${priceHistoryByProduct}">
+                <h4 class="mt-4" th:text="'Produit: ' + ${entry.key}"></h4>
+
+                <!-- Table -->
+                <table class="table datatable">
+                  <thead>
+                    <tr>
+                      <th>ID Historique Prix</th>
+                      <th>Prix</th>
+                      <th>Date de Changement</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <!-- Iterate through historiques for each product -->
+                    <tr th:each="historique : ${entry.value}">
+                      <td th:text="${historique.idHistoriquePrix}"></td>
+                      <td th:text="${historique.prix} + ' €'"></td>
+                      <td th:text="${#dates.format(historique.dateChangement, 'dd/MM/yyyy HH:mm')}"></td>
+                      
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <!-- End product section -->
             </div>
           </div>
         </div>
@@ -90,7 +85,7 @@
   <!-- Footer -->
   <footer id="footer" class="footer">
     <div class="copyright">
-      <strong><span>Pharmacie</span></strong>. All Rights Reserved
+      <strong><span>Pharmacie</span></strong>. Tous droits réservés.
     </div>
   </footer>
 

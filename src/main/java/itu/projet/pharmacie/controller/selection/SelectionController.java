@@ -33,16 +33,17 @@ public class SelectionController {
     @GetMapping("")
     public String listerSelection(
             @RequestParam(value = "idTypeSelection", required = false) Integer idTypeSelection,
-            @RequestParam(value = "dateDebut", required = false) String dateDebut,
-            @RequestParam(value = "dateFin", required = false) String dateFin,
+            @RequestParam(value = "mois", required = false) Integer mois, 
+            @RequestParam(value = "annee", required = false) Integer annee,
             Model model) {
-
-        // Appel de la méthode de filtrage dans le service
-        model.addAttribute("typeselection", typeSelectionRepository.findAll()); 
-        List<Selection> selections = selectionService.filtrerSelections(idTypeSelection, dateDebut, dateFin);
+        model.addAttribute("typeselection", typeSelectionRepository.findAll());
+        List<Selection> selections = selectionService.filtrerSelections(idTypeSelection, mois, annee);
         model.addAttribute("selections", selections);
+        model.addAttribute("idTypeSelection", idTypeSelection);
+        model.addAttribute("mois", mois);
+        model.addAttribute("annee", annee);
 
-        return "elements/selection/list"; // Vue pour afficher la liste des sélections
+        return "elements/selection/list"; 
     }
 
     /**

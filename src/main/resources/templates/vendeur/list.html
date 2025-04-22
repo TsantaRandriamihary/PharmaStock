@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>Liste des Vendeurs</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link th:href="@{/assets/vendor/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+  <link th:href="@{/assets/vendor/bootstrap-icons/bootstrap-icons.css}" rel="stylesheet">
+  <link th:href="@{/assets/vendor/boxicons/css/boxicons.min.css}" rel="stylesheet">
+  <link th:href="@{/assets/css/style.css}" rel="stylesheet">
+</head>
+
+<body>
+  <!-- Header -->
+  <header id="header" class="header fixed-top d-flex align-items-center">
+    <div class="d-flex align-items-center justify-content-between">
+      <a href="@{/}" class="logo d-flex align-items-center">
+        <img src="assets/img/logo.png" alt="">
+        <span class="d-none d-lg-block">Pharmacie</span>
+      </a>
+      <i class="bi bi-list toggle-sidebar-btn"></i>
+    </div>
+  </header>
+
+  <div th:replace="fragments/navbar :: sidebar"></div>
+  
+    <!-- Main Content -->
+      <main id="main" class="main">
+        <div class="pagetitle">
+            <h1>Liste des Vendeurs</h1>
+        </div>
+        <!-- Affichage de l'erreur si elle existe -->
+        <div th:if="${error}" class="alert alert-danger" role="alert">
+            <p th:text="${error}"></p>
+        </div>
+        <section class="section">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="card-title">Vendeurs</h5>
+                                <a th:href="@{/vendeurs/add}" class="btn btn-primary">Ajouter Vendeur</a>
+                            </div>
+    
+                            <!-- Formulaire de filtre par date -->
+                            <form th:action="@{/vendeurs}" method="get" class="d-flex mb-3">
+                                <input type="date" name="dateDebutStr" class="form-control" placeholder="Date Début" />
+                                <input type="date" name="dateFinStr" class="form-control mx-2" placeholder="Date Fin" />
+                                <button type="submit" class="btn btn-primary">Filtrer</button>
+                            </form>
+    
+                            <!-- Tableau des Vendeurs -->
+                            <table class="table datatable">
+                                <thead>
+                                    <tr>
+                                        <th>Nom du Vendeur</th>
+                                        <th>Total Vendu</th>
+                                        <th>Total Commission</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="vendeur : ${vendeurs}">
+                                        <td th:text="${vendeur.nomVendeur}"></td>
+                                        <td th:text="${vendeur.totalVendue}"></td>
+                                        <td th:text="${vendeur.totalCommission}"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+    
+                            <!-- Graphique des statistiques par genre -->
+                            <div class="row mt-5">
+                                <div class="col-lg-6">
+                                    <div id="chart"></div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <h5>Statistiques par Genre</h5>
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Genre</th>
+                                                <th>Montant Total</th>
+                                                <th>Montant Commission</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr th:each="entry : ${statGenre}">
+                                                <td th:text="${entry.key.nomGenre}"></td>
+                                                <td th:text="${entry.value['montantTotal']}"></td>
+                                                <td th:text="${entry.value['montantCommission']}"></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+    
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+  <!-- Footer -->
+  <footer id="footer" class="footer">
+    <div class="copyright">
+      <strong><span>Pharmacie</span></strong>. Tous droits réservés.
+    </div>
+  </footer>
+
+  <!-- Vendor JS Files -->
+  <script th:src="@{/assets/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+  <script th:src="@{/assets/vendor/simple-datatables/simple-datatables.js}"></script>
+  <script th:src="@{/assets/js/main.js}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+  <script>
+    // Attendre que le DOM soit complètement chargé avant d'exécuter le script
+document.addEventListener('DOMContentLoaded', function () {
+  var genres = [];
+  var montantTotalData = [];
+  var montantCommissionData = [];
+
+  var rows = document.querySelectorAll("table tbody tr");
+
+  rows.forEach(function(row) {
+      var cells = row.querySelectorAll("td");
+
+      var genre = cells[0].innerText;
+
+      var montantTotal = parseFloat(cells[1].innerText) || 0; 
+      var montantCommission = parseFloat(cells[2].innerText) || 0;
+
+      genres.push(genre);
+      montantTotalData.push(montantTotal);
+      montantCommissionData.push(montantCommission);
+  });
+
+  var options = {
+      chart: {
+          type: 'bar',
+          height: 350
+      },
+      series: [{
+          name: 'Montant Total',
+          data: montantTotalData
+      }, {
+          name: 'Montant Commission',
+          data: montantCommissionData
+      }],
+      xaxis: {
+          categories: genres
+      },
+      title: {
+          text: 'Statistiques des Vendeurs par Genre',
+          align: 'center'
+      }
+  };
+  var chart = new ApexCharts(document.querySelector("#chart"), options);
+  chart.render();
+});
+
+</script>
+</body>
+
+</html>

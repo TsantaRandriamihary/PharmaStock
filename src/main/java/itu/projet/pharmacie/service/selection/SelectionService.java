@@ -36,19 +36,15 @@ public class SelectionService {
      * @throws IllegalArgumentException Si l'idProduit ou idTypeSelection est invalide
      */
     public Selection insererSelection(Integer idProduit, Integer idTypeSelection, String description, String dateDebut, String dateFin) {
-        // Vérification de l'existence du produit
         Optional<Produit> produitOpt = produitRepository.findById(idProduit);
         if (produitOpt.isEmpty()) {
             throw new IllegalArgumentException("Produit avec l'ID " + idProduit + " non trouvé.");
         }
-
-        // Vérification de l'existence du type de sélection
         Optional<TypeSelection> typeSelectionOpt = typeSelectionRepository.findById(idTypeSelection);
         if (typeSelectionOpt.isEmpty()) {
             throw new IllegalArgumentException("Type de sélection avec l'ID " + idTypeSelection + " non trouvé.");
         }
 
-        // Création de la nouvelle sélection
         Selection selection = new Selection();
         selection.setProduit(produitOpt.get());
         selection.setTypeSelection(typeSelectionOpt.get());
@@ -56,37 +52,44 @@ public class SelectionService {
         selection.setDateDebut(dateDebut);
         selection.setDateFin(dateFin);
 
-        // Sauvegarde dans la base de données
         return selectionRepository.save(selection);
     }
 
-    public List<Selection> filtrerSelections(Integer idTypeSelection, String dateDebut, String dateFin) {
-        List<Selection> toutesLesSelections = selectionRepository.findAll();
-        
-        // Filtrage par idTypeSelection si non null
+    public List<Selection> filtrerSelections(Integer idTypeSelection, Integer mois, Integer annee) {
+        List<Selection> toutesLesSelections = selectionRepository.findAll();    
         if (idTypeSelection != null) {
             toutesLesSelections = toutesLesSelections.stream()
-                    .filter(selection -> selection.getTypeSelection() != null && 
+                    .filter(selection -> selection.getTypeSelection() != null &&
                                          selection.getTypeSelection().getIdTypeSelection().equals(idTypeSelection))
                     .collect(Collectors.toList());
-        }
-    
-        // Filtrage par dateDebut si non null et non vide
-        if (dateDebut != null && !dateDebut.isEmpty()) {
+        }    
+        if (mois != null) {
             toutesLesSelections = toutesLesSelections.stream()
-                    .filter(selection -> selection.getDateDebut().compareTo(dateDebut) >= 0)
+                    .filter(selection -> {
+                        String dateDebut = selection.getDateDebut();
+                        if (dateDebut != null && !dateDebut.isEmpty()) {
+                            int moisSelection = Integer.parseInt(dateDebut.substring(5, 7)); // Format "YYYY-MM-DD"
+                            return moisSelection == mois;
+                        }
+                        return false;
+                    })
+                    .collect(Collectors.toList());
+        }    
+        if (annee != null) {
+            toutesLesSelections = toutesLesSelections.stream()
+                    .filter(selection -> {
+                        String dateDebut = selection.getDateDebut();
+                        if (dateDebut != null && !dateDebut.isEmpty()) {
+                            int anneeSelection = Integer.parseInt(dateDebut.substring(0, 4)); // Format "YYYY-MM-DD"
+                            return anneeSelection == annee;
+                        }
+                        return false;
+                    })
                     .collect(Collectors.toList());
         }
-    
-        // Filtrage par dateFin si non null et non vide
-        if (dateFin != null && !dateFin.isEmpty()) {
-            toutesLesSelections = toutesLesSelections.stream()
-                    .filter(selection -> selection.getDateFin().compareTo(dateFin) <= 0)
-                    .collect(Collectors.toList());
-        }
-    
         return toutesLesSelections;
     }
+    
     
     
 }

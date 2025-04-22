@@ -36,112 +36,7 @@
     </div>
   </header>
 
-    <!-- ======= Sidebar ======= -->
-    <aside id="sidebar" class="sidebar">
-      <ul class="sidebar-nav" id="sidebar-nav">
-        <li class="nav-item">
-          <a class="nav-link " data-bs-target="#forms-nav" data-bs-toggle="collapse">
-            <i class="bi bi-journal-text"></i><span>Elements</span><i class="bi bi-chevron-down ms-auto"></i>
-          </a>
-          <ul id="forms-nav" class="nav-content collapse show" data-bs-parent="#sidebar-nav">
-            <li>
-              <a th:href="@{/substances}">
-                <i class="bi bi-circle"></i><span>Substances</span>
-              </a>
-            </li>
-            <li>
-              <a th:href="@{/symptomes}">
-                <i class="bi bi-circle"></i><span>Symptomes</span>
-              </a>
-            </li>
-            <li>
-              <a th:href="@{/agentsubstance}">
-                <i class="bi bi-circle"></i><span>Agent - Substance</span>
-              </a>
-            </li>
-            <li>
-              <a th:href="@{/substancesymptome}">
-                <i class="bi bi-circle"></i><span>Substance - Symptomes</span>
-              </a>
-            </li>
-            <li>
-              <a th:href="@{/lots}">
-                <i class="bi bi-circle"></i><span>Lots</span>
-              </a>
-            </li>
-            <li>
-              <a th:href="@{/fournisseurs}">
-                <i class="bi bi-circle"></i><span>Fournisseurs</span>
-              </a>
-            </li>
-            <li>
-              <a th:href="@{/clients}">
-                <i class="bi bi-circle"></i><span>Clients</span>
-              </a>
-            </li>
-            <li>
-              <a th:href="@{/selections}">
-                <i class="bi bi-circle"></i><span>Selection de produit</span>
-              </a>
-            </li>
-          </ul>
-        </li>
-  
-        <li class="nav-item">
-          <a class="nav-link collapsed" th:href="@{/maladies}">
-            <i class="bi bi-person"></i>
-            <span>Maladies</span>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link collapsed" th:href="@{/laboratoires}">
-            <i class="bi bi-person"></i>
-            <span>Laboratoires</span>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link collapsed" th:href="@{/produits}">
-            <i class="bi bi-person"></i>
-            <span>Produits</span>
-          </a>
-        </li>
-  
-        
-        <li class="nav-item">
-          <a class="nav-link " data-bs-target="#forms-nav" data-bs-toggle="collapse">
-            <i class="bi bi-journal-text"></i><span>Transactions</span><i class="bi bi-chevron-down ms-auto"></i>
-          </a>
-          <ul id="forms-nav" class="nav-content collapse show" data-bs-parent="#sidebar-nav">
-            <li>
-              <a th:href="@{/achats}">
-                <i class="bi bi-circle"></i><span>Achats de produits</span>
-              </a>
-            </li>
-            <li>
-              <a th:href="@{/ventes}">
-                <i class="bi bi-circle"></i><span>Ventes de produits</span>
-              </a>
-            </li>
-          </ul>
-        </li>
-  
-        <li class="nav-item">
-          <a class="nav-link " data-bs-target="#forms-nav" data-bs-toggle="collapse">
-            <i class="bi bi-journal-text"></i><span>Gestion de stocks</span><i class="bi bi-chevron-down ms-auto"></i>
-          </a>
-          <ul id="forms-nav" class="nav-content collapse show" data-bs-parent="#sidebar-nav">
-            <li>
-              <a th:href="@{/mouvement-stock}">
-                <i class="bi bi-circle"></i><span>Mouvements de stock</span>
-              </a>
-            </li>
-            
-          </ul>
-        </li>
-        
-      </ul>
-    </aside>
-    <!-- End Sidebar -->
+  <div th:replace="fragments/navbar :: sidebar"></div>
 
   <!-- Main Content -->
   <main id="main" class="main">
@@ -164,26 +59,37 @@
             <div class="card-body">
               <!-- Formulaire de filtre -->
               <form th:action="@{/selections}" method="get" class="d-flex mb-3">
+                <!-- Sélection du Type de Sélection -->
                 <div class="input-group">
                   <label for="idTypeSelection" class="input-group-text">Type de Sélection</label>
                   <select class="form-select" name="idTypeSelection" id="idTypeSelection">
-                    <option value="" selected>Tous</option>
-                    <option th:each="type : ${typeselection}" th:value="${type.idTypeSelection}" th:text="${type.nomSelection}"></option>
+                    <option value="" th:selected="${idTypeSelection == null}">Tous</option>
+                    <option th:each="type : ${typeselection}" 
+                            th:value="${type.idTypeSelection}" 
+                            th:text="${type.nomSelection}" 
+                            th:selected="${idTypeSelection == type.idTypeSelection}">
+                    </option>
                   </select>
                 </div>
-
+              
+                <!-- Sélection du Mois -->
                 <div class="input-group ms-3">
-                  <label for="dateDebut" class="input-group-text">Date de Début</label>
-                  <input type="date" name="dateDebut" id="dateDebut" class="form-control">
-                </div>
+                  <label for="mois" class="input-group-text">Mois</label>
+                  <input type="number" name="mois" min="1" max="12" class="form-control" value="1">
 
+                </div>
+              
+                <!-- Sélection de l'Année -->
                 <div class="input-group ms-3">
-                  <label for="dateFin" class="input-group-text">Date de Fin</label>
-                  <input type="date" name="dateFin" id="dateFin" class="form-control">
+                  <label for="annee" class="input-group-text">Année</label>
+                  <input type="number" name="annee" id="annee" class="form-control" 
+                         th:value="${annee}" placeholder="Ex: 2023" min="2000" max="2100">
                 </div>
-
+              
+                <!-- Bouton de Filtrage -->
                 <button type="submit" class="btn btn-primary ms-3">Filtrer</button>
               </form>
+              
 
               <!-- Table -->
               <table class="table datatable">

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/clients")
@@ -18,11 +19,16 @@ public class ClientController {
     private ClientService clientService;
 
     @GetMapping("")
-    public String listClients(Model model) {
-        List<Client> clients = clientService.getAllClients();
-        model.addAttribute("clients", clients);
+    public String listClients(
+            @RequestParam(value = "date", required = false) String date,
+            Model model
+    ) {
+        Map<Client, Map<String, Object>> clientStats = clientService.getClientStats(date);        
+        model.addAttribute("clientStats", clientStats);
+        model.addAttribute("selectedDate", date);
         return "client/list";
     }
+
 
     @GetMapping("/add")
     public String showForm(Model model) {

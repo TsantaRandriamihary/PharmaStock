@@ -177,7 +177,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER trigger_vente_mouvement_stock_details
+CREATE OR REPLACE TRIGGER trigger_vente_mouvement_stock_details
 AFTER INSERT OR UPDATE OR DELETE ON vente_details
 FOR EACH ROW EXECUTE FUNCTION trigger_vente_mouvement_stock_details();
 

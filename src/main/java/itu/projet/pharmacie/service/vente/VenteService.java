@@ -14,9 +14,13 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -139,6 +143,17 @@ public class VenteService {
         List<Produit> produitsFiltres = produitService.filterProduits(null, idTrancheage, idForme);
         List<VenteDetails> venteDetailsFiltres = venteDetailsService.getVenteDetailsByProduits(produitsFiltres);
         return getVentesByVenteDetails(venteDetailsFiltres);
+    }
+
+
+    public List<Vente> getVentesByDate(String dateString) {
+        Date sqlDate = Date.valueOf(dateString);     
+        return venteRepository.findAll().stream()
+                .filter(vente -> {
+                    Date venteDate = new Date(vente.getDateVente().getTime());
+                    return venteDate.equals(sqlDate);
+                })
+                .collect(Collectors.toList());
     }
 
 

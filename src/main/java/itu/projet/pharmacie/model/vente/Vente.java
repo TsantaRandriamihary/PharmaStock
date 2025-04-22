@@ -22,6 +22,20 @@ public class Vente {
     @JoinColumn(name = "idClient")
     private Client client;
 
+    
+    @ManyToOne
+    @JoinColumn(name = "idVendeur")
+    private Vendeur vendeur;
+
+     // Getters et setters
+     public Vendeur getVendeur() {
+        return vendeur;
+    }
+
+    public void setVendeur(Vendeur vendeur) {
+        this.vendeur = vendeur;
+    }
+
     // Getters and Setters
     public Integer getIdVente() {
         return idVente;

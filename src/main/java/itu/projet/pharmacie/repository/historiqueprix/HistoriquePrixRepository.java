@@ -14,7 +14,11 @@ import itu.projet.pharmacie.model.historiqueprix.HistoriquePrix;
 @Repository
 public interface HistoriquePrixRepository extends JpaRepository<HistoriquePrix, Integer> {
     void deleteAllByProduitIdProduit(Integer produitId);
-    @Query("SELECT h FROM HistoriquePrix h WHERE h.produit.idProduit = :idProduit AND h.dateChangement <= :dateVente ORDER BY h.dateChangement DESC")
-    Optional<HistoriquePrix> findLatestPriceBeforeDate(@Param("idProduit") Integer idProduit, @Param("dateVente") Timestamp dateVente);
+    @Query("SELECT h FROM HistoriquePrix h " +
+       "WHERE h.produit.idProduit = :idProduit AND h.dateChangement <= :dateVente " +
+       "ORDER BY h.dateChangement DESC, h.idHistoriquePrix DESC " +
+       "LIMIT 1")
+Optional<HistoriquePrix> findLatestPriceBeforeDate(@Param("idProduit") Integer idProduit, 
+                                                @Param("dateVente") Timestamp dateVente);
 }
 

@@ -142,3 +142,57 @@ INSERT INTO type_selection (nom_selection)
 VALUES 
 ('Choix du Redacteur'),
 ('Conseil du Mois');
+
+INSERT INTO commission (pourcent_commission, min_chiffre_affaire)
+VALUES 
+(5, 10000);
+
+-- Insérer une vente dans la table "vente"
+INSERT INTO vente (
+    date_vente, 
+    etat_vente, 
+    description_vente, 
+    id_vendeur, 
+    id_client
+) 
+VALUES (
+    '2025-01-24', 
+    1, 
+    'Vente test de produit X', 
+    2, 
+    1  
+) RETURNING id_vente; 
+
+
+INSERT INTO vente_details (
+    quantite_vendue, 
+    prix_vente_unitaire, 
+    id_lot, 
+    id_vente
+)
+VALUES (
+    10, 
+    10000.00, 
+    3,
+    5
+);
+
+INSERT INTO vente_details (
+    quantite_vendue, 
+    prix_vente_unitaire, 
+    id_lot, 
+    id_vente
+)
+VALUES (
+    2, 
+    16000.00, 
+    6,
+    5
+);
+
+
+INSERT INTO vendeur (nom_vendeur, id_genre) 
+VALUES 
+('Alice Smith', 2),
+('Bob Johnson', 1),
+('Charlie Brown', 1);

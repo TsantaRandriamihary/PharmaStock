@@ -11,6 +11,7 @@ import itu.projet.pharmacie.repository.historiqueprix.HistoriquePrixRepository;
 import itu.projet.pharmacie.repository.type.FormeRepository;
 import itu.projet.pharmacie.repository.type.TrancheageRepository;
 import itu.projet.pharmacie.service.vente.VenteService;
+import itu.projet.pharmacie.service.vente.VendeurService;
 import itu.projet.pharmacie.service.personnage.ClientService;
 import itu.projet.pharmacie.service.produit.ProduitService;
 import itu.projet.pharmacie.service.lot.LotService;
@@ -33,6 +34,10 @@ public class VenteController {
 
     @Autowired
     private ClientService clientService;
+
+    
+    @Autowired
+    private VendeurService vendeurService;
 
     @Autowired
     private LotService lotService;
@@ -73,6 +78,7 @@ public class VenteController {
     public String addVenteForm(Model model) {
         model.addAttribute("vente", new Vente());
         model.addAttribute("clients", clientService.getAllClients());
+        model.addAttribute("vendeur", vendeurService.getAllVendeurs());
         model.addAttribute("produits", produitService.getAllProduits());
         model.addAttribute("venteDetails", new VenteDetails());
         return "vente/form";
@@ -84,6 +90,7 @@ public class VenteController {
             @RequestParam("descriptionVente") String descriptionVente,
             @RequestParam("dateVente") String dateVenteStr,
             @RequestParam(value = "clientId", required = false) Integer clientId,
+            @RequestParam(value = "vendeurId", required = false) Integer vendeurId,
             @RequestParam("produitId") List<Integer> produitIdList,
             @RequestParam("quantiteVendue") List<Integer> quantiteVendueList,
             Model model) {
@@ -94,6 +101,9 @@ public class VenteController {
             vente.setDateVente(dateVente);
             if (clientId != null && clientId != 0) {
                 vente.setClient(clientService.getClientById(clientId).get());
+            }
+            if (vendeurId != null && vendeurId != 0) {
+                vente.setVendeur(vendeurService.getVendeurById(vendeurId).get());
             }
             List<VenteDetails> venteDetailsList = new ArrayList<>();
             for (int i = 0; i < produitIdList.size(); i++) {
@@ -137,6 +147,7 @@ public class VenteController {
             model.addAttribute("produits", produitService.getAllProduits());
             model.addAttribute("clients", clientService.getAllClients());
             model.addAttribute("quantiteVendue", quantiteVendueList);
+            e.printStackTrace();
             return "vente/form";
         }
     }

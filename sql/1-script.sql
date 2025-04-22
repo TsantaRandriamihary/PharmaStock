@@ -186,6 +186,34 @@ CREATE TABLE vente(
    FOREIGN KEY(id_client) REFERENCES client(id_client)
 );
 
+
+CREATE TABLE vendeur(
+   id_vendeur SERIAL,
+   nom_vendeur VARCHAR(255)  NOT NULL,
+   id_genre INTEGER NOT NULL,
+   PRIMARY KEY(id_vendeur),
+   FOREIGN KEY(id_genre) REFERENCES genre(id_genre)
+);
+
+CREATE TABLE commission(
+   id_commision SERIAL,
+   pourcent_commission NUMERIC(15,2)   NOT NULL,
+   min_chiffre_affaire NUMERIC(15,2)   NOT NULL,
+   PRIMARY KEY(id_commision)
+);
+
+CREATE TABLE vente(
+   id_vente SERIAL,
+   date_vente TIMESTAMP NOT NULL,
+   etat_vente INTEGER,
+   montant_total NUMERIC(15,2)  ,
+   description_vente TEXT,
+   id_vendeur INTEGER  NOT NULL,
+   id_client INTEGER NOT NULL,
+   PRIMARY KEY(id_vente),
+   FOREIGN KEY(id_vendeur) REFERENCES vendeur(id_vendeur),
+   FOREIGN KEY(id_client) REFERENCES client(id_client)
+);
 CREATE TABLE vente_details(
    id_vente_details SERIAL,
    quantite_vendue INTEGER NOT NULL,
